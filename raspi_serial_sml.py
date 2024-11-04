@@ -19,10 +19,7 @@ from time import sleep
 from picamera import PiCamera
 import struct
 
-try:
-    import queue
-except ImportError:
-    import Queue as queue
+import queue
 
 from robust_serial import write_order, Order, write_i8, write_i16, read_i16, read_i32, read_i8
 from robust_serial.utils import open_serial_port
@@ -39,7 +36,7 @@ step_length = 5
 def main():
     test_camera()
     connect_to_arduino()
-    
+
     print("Welcome to raspi_serial.py")
     print("Press enter to validate your commands")
     print("Enter h to get the list of valid commands")
@@ -47,7 +44,7 @@ def main():
     while cmd_str != 'q':
         cmd_str = input("Enter your command: ")
         process_cmd(cmd_str)
-    
+
     camera.close()
 
 
@@ -67,7 +64,9 @@ def connect_to_arduino():
     global serial_file
     try:
         # Open serial port (for communication with Arduino)
-        serial_file = open_serial_port(baudrate=BAUDRATE)
+        serial_file = open_serial_port(
+            serial_port="/dev/ttyACM0"
+            baudrate=BAUDRATE)
     except Exception as e:
         print('exception')
         raise e

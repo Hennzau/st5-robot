@@ -65,7 +65,7 @@ def connect_to_arduino():
     try:
         # Open serial port (for communication with Arduino)
         serial_file = open_serial_port(
-            serial_port="/dev/ttyACM0",
+            serial_port='/dev/ttyACM0',
             baudrate=BAUDRATE)
     except Exception as e:
         print('exception')

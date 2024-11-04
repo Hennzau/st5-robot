@@ -65,21 +65,22 @@ def perception(feedback = True):
             cx = int(M['m10']/M['m00'])
             cy = int(M['m01']/M['m00'])
             # print("Centroid of the biggest area: ({}, {})".format(cx, cy))
+            
+            # Location of the centroid
+            cv2.circle(im2, (cx, cy), 10, (0, 0, 255), 3)
+            # Vertical line in the center
+            cv2.line(im2, (w//2, 0), (w//2, h), (255, 0, 0), 2)
+
+            # Distance to the center allowing to turn left or right
+            distance = cx - w/2
+                    
+            if distance > 0:
+                cv2.putText(im2, f"R {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            else:
+                cv2.putText(im2, f"L {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+        
         else:
             print("No Centroid Found")
-
-        # Location of the centroid
-        cv2.circle(im2, (cx, cy), 10, (0, 0, 255), 3)
-        # Vertical line in the center
-        cv2.line(im2, (w//2, 0), (w//2, h), (255, 0, 0), 2)
-
-        # Distance to the center allowing to turn left or right
-        distance = cx - w/2
-                
-        if distance > 0:
-            cv2.putText(im2, f"R {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-        else:
-            cv2.putText(im2, f"L {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
             
         cv2.imshow("Image traitée", im2)
         cv2.waitKey(1)

@@ -165,6 +165,8 @@ time.sleep(2)			# on attend 2s pour que la carte soit initialisée
 arduino.write(b'A22')		# demande de connection avec acquitement par OK
 rep = arduino.readline()
 if rep.split()[0]==b'OK':
+    print("Connection ok")
+
     arduino.write(b'I0')
     AttAcquit()
     print(rep.decode())

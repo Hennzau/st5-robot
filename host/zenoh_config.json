@@ -1,0 +1,14 @@
+{
+  "mode": "peer",
+  "connect": {
+    "endpoints": ["udp/localhost:7447"]
+  },
+  "listen": {
+    "endpoints": ["udp/0.0.0.0:0"]
+  },
+  "scouting": {
+    "multicast": {
+      "enabled": true
+    }
+  }
+}

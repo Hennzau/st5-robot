@@ -60,7 +60,7 @@ def    carStop():
     envoiCmdi(b'C',0,0,0,0)
 
 def    carStopS():
-    envoiCmdi(b'D',0,0,20,0);
+    envoiCmdi(b'D',0,0,20,0)
 
 def    carAdvance(v1,v2):
     envoiCmdi(b'C',v1,v2,0,0)
@@ -176,4 +176,3 @@ if rep.split()[0]==b'OK':
 arduino.write(b'a')	# deconnection de la carte
 arduino.close()         # fermeture de la liaison série
 print ("Fin de programme")
-

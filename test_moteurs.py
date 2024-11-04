@@ -1,4 +1,4 @@
-import serial 
+import serial
 import time
 import numpy as np
 import struct
@@ -78,39 +78,39 @@ def  carTurnLeft(v1,v2):
     envoiCmdi(b'C',v1,-v2,0,0)
 
 def  carTurnRight(v1,v2):
-    envoiCmdi(b'C',-v1,v2,0,0)   
-    
+    envoiCmdi(b'C',-v1,v2,0,0)
+
 def TestMoteur():
-    
+
     steptime = 2 			# durée de chaque étape
-    
+
     if (1==1):
         print("le vehicule avance")
         carAdvance(150,150)
         time.sleep(1*steptime)
         carStop()
         time.sleep(1)
-        
+
     if (1==1):
         print(" le vehicule recule")
         carBack(150,150)
         time.sleep(steptime)
         carStop()
         time.sleep(1)
-    
+
     if (1==1):
         print(" le vehicule tourne à gauche")
         carTurnLeft(120,120)
         time.sleep(steptime)
         carStop()
         time.sleep(1)
-        
+
         print(" le vehicule tourne à droite")
         carTurnRight(120,120)
         time.sleep(steptime)
         carStop()
         time.sleep(1)
-        
+
     if (1==1):
 
         print("le vehicule avance progressivement")
@@ -118,30 +118,30 @@ def TestMoteur():
         time.sleep(3*steptime)
         carStop()
         time.sleep(1)
-        
+
     if (1==1):
         print(" le vehicule recule progressivement")
         carBackS(200,200,20)
         time.sleep(3*steptime)
         carStop()
         time.sleep(1)
-        
+
     if (1==1):
-        print("Remise à 0 des encodeurs de position")        
+        print("Remise à 0 des encodeurs de position")
         resetENC()
         print("Test du capteur IR")
         arduino.write(b'I1')
         AttAcquit()
         print("Le vehicule démarre")
         carAdvance(180,180)
-        
+
         vit1=1
         vit2=1
         while ((vit1!=0) or (vit2!=0)):
             time.sleep(0.5)
             tim,tim2,ir,dum1 = recupCmdi(b'R')
-            enc1,enc2 = recupCmdl(b'N') 
-            print(enc1,enc2,ir) ;
+            enc1,enc2 = recupCmdl(b'N')
+            print(enc1,enc2,ir)
             vit1,vit2,dum1,dum2 = recupCmdi(b'T')
         print("Un obstacle a été détecté")
 
@@ -167,9 +167,9 @@ rep = arduino.readline()
 if rep.split()[0]==b'OK':
     arduino.write(b'I0')
     AttAcquit()
-    print(rep.decode()) 
+    print(rep.decode())
     TestMoteur()
-  
+
 #######################################
 #   deconnection de l'arduino
 

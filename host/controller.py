@@ -47,7 +47,7 @@ class Controller:
             self.hat.append(self.joy.get_hat(i))
 
         # Create zenoh session
-        config = zenoh.Config.from_file("zenoh_config.json")
+        config = zenoh.Config.from_file("host/zenoh_config.json")
         self.session = zenoh.open(config)
 
         # Create zenoh pub/sub
@@ -88,7 +88,7 @@ class Controller:
                 elif event.type == JOYBUTTONDOWN:
                     self.button[event.button] = 1
 
-            joystick = JoyStickController(axes=self.axis, buttons=self.button, balls=self.ball)
+            joystick = JoyStickController(axis=self.axis, buttons=self.button, balls=self.ball)
             self.controller_pub.put(JoyStickController.serialize(joystick))
 
         self.close()

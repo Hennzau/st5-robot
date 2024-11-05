@@ -224,9 +224,9 @@ class Node:
 
     def set_wheel_velocities(self):
         if self.current_state == 'RIGHT':
-            carAdvance(self.arduino, -200, 200)
+            carAdvance(self.arduino, 0, 200)
         elif self.current_state == 'LEFT':
-            carAdvance(self.arduino, 200, -200)
+            carAdvance(self.arduino, 200, 0)
         else:
             carAdvance(self.arduino, 200, 200)
 

@@ -18,9 +18,11 @@ class RGBCamera(IdlStruct):
 @dataclass
 class ProcessedImageData(IdlStruct):
     distance_to_middle: float32
+    pos_intersection: float32
     max_white: float32
     left_histogram: float32
     right_histogram: float32
+    top_histogram: float32
 
 
 @dataclass

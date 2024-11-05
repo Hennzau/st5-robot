@@ -72,7 +72,7 @@ class Node:
 
         self.camera_publisher = self.session.declare_publisher("happywheels/camera")
         self.processed_image_data = self.session.declare_publisher(
-            "happywheels/line_middle"
+            "happywheels/processed_image_data"
         )
 
     def run(self):
@@ -143,13 +143,22 @@ class Node:
 
                 # Distance to the center allowing to turn left or right
                 distance = cx - w / 2
-                cv2.putText(frame, f"{distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+                cv2.putText(
+                    frame,
+                    f"{distance}",
+                    (cx, cy),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (255, 0, 0),
+                    2,
+                    cv2.LINE_AA,
+                )
 
                 image_data.distance_to_middle = distance
 
             color_frame = cv2.imencode(
-                            ".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70]
-                        )[1].tobytes()
+                ".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70]
+            )[1].tobytes()
 
             # Compute horizontal histogram of the white pixels in dilated_mask
             histogram = np.sum(dilated_mask, axis=1)
@@ -160,10 +169,9 @@ class Node:
             image_data.pos_intersection = pos_intersection
             image_data.max_white = max_white
 
-            left_histogram = np.max(np.sum(dilated_mask[:, :w//8], axis=1))
-            right_histogram = np.max(np.sum(dilated_mask[:, 7*w//8:], axis=1))
-            top_histogram = np.max(np.sum(dilated_mask[:h//8, :], axis=0))
-
+            left_histogram = np.max(np.sum(dilated_mask[:, : w // 8], axis=1))
+            right_histogram = np.max(np.sum(dilated_mask[:, 7 * w // 8 :], axis=1))
+            top_histogram = np.max(np.sum(dilated_mask[: h // 8, :], axis=0))
 
             image_data.left_histogram = left_histogram
             image_data.right_histogram = right_histogram
@@ -172,9 +180,7 @@ class Node:
             # =======================
             # Complete here with your own message
             # =======================
-            self.processed_image_data.put(
-                ProcessedImageData.serialize(image_data)
-            )
+            self.processed_image_data.put(ProcessedImageData.serialize(image_data))
 
             image = RGBCamera(
                 rgb=color_frame,

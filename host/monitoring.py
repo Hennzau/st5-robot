@@ -110,10 +110,10 @@ class Monitoring:
         h, w = rgb.shape[:2]
 
         # Vertical line in the center
-        cv2.line(rgb, (w//2, 0), (w//2, h), (0, 255, 0), 2)
+        cv2.line(rgb, (w // 2, 0), (w // 2, h), (0, 255, 0), 2)
 
         # Turn line
-        cv2.line(rgb, (0, h - h//4), (w, h - h//4), (0, 255, 0), 2)
+        cv2.line(rgb, (0, h - h // 4), (w, h - h // 4), (0, 255, 0), 2)
 
         data = np.flip(rgb, 2)
         data = data.ravel()

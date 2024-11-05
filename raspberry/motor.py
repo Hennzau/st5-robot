@@ -222,11 +222,11 @@ class Node:
 
     def set_wheel_velocities(self):
         if self.current_state == 'RIGHT':
-            carTurnRight(self.arduino, 250, 250)
+            carTurnRight(self.arduino, 100, 100)
         elif self.current_state == 'LEFT':
-            carTurnLeft(self.arduino, 250, 250)
+            carTurnLeft(self.arduino, 100, 100)
         else:  # CENTER
-            carAdvance(self.arduino, 250, 250)
+            carAdvance(self.arduino, 100, 100)
 
     def line_middle_callback(self, sample):
         line_middle = LineMiddle.deserialize(sample.payload.to_bytes())

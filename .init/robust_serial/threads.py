@@ -22,9 +22,7 @@ class CommandThread(threading.Thread):
     :param serial_lock: (threading.Lock)
     """
 
-    def __init__(
-        self, serial_file, command_queue, exit_event, n_received_semaphore, serial_lock
-    ):
+    def __init__(self, serial_file, command_queue, exit_event, n_received_semaphore, serial_lock):
         threading.Thread.__init__(self)
         self.deamon = True
         self.serial_file = serial_file

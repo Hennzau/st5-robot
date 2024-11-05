@@ -251,7 +251,7 @@ class Node:
         # Check if the max value is above a certain threshold
         if max_white > 10000: # Value to be adjusted
             self.current_state['intersection'] = True
-            if pos_intersection > 128 - 128//4:
+            if pos_intersection > 128 - 128//2:
                 self.current_state['intersection'] = 'NEAR'
             else:
                 self.current_state['intersection'] = 'DETECTED'

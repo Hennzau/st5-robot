@@ -73,7 +73,6 @@ def AttAcquit(arduino):
     rep=b''
     while rep==b'':					# attend l'acquitement du B2
         rep=arduino.readline()
-    print(rep.decode())
 
 def    resetENC(arduino):
     envoiCmdi(arduino, b'B',0,0,0,0)
@@ -234,6 +233,7 @@ class Node:
         distance = line_middle.value
 
         self.update_state(distance)
+        print(self.current_state)
         self.set_wheel_velocities()
 
     def ctrl_c_signal(self, signum, frame):

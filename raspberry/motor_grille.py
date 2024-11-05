@@ -265,11 +265,11 @@ class Node:
                 order = random.choice(self.current_state['possibilities'])
 
                 if order == 'LEFT':
-                    carAdvance(self.arduino, 255, 100)
-                    time.sleep(0.5)
+                    carAdvance(self.arduino, 255, -50)
+                    time.sleep(0.1)
                 elif order == 'RIGHT':
-                    carAdvance(self.arduino, 100, 255)
-                    time.sleep(0.5)
+                    carAdvance(self.arduino, -50, 255)
+                    time.sleep(0.1)
 
             else:
                 if self.current_state['pos'] == "RIGHT":

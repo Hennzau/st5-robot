@@ -266,13 +266,13 @@ class Node:
 
                 if order == 'LEFT':
                     carAdvance(self.arduino, 255, -200)
-                    time.sleep(0.4)
+                    time.sleep(0.2)
                 elif order == 'RIGHT':
                     carAdvance(self.arduino, -200, 255)
-                    time.sleep(0.4)
+                    time.sleep(0.2)
                 else:
                     carAdvance(self.arduino, 200, 200)
-                    time.sleep(0.4)
+                    time.sleep(0.2)
 
             else:
                 if self.current_state['pos'] == "RIGHT":

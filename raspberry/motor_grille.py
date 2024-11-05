@@ -272,9 +272,9 @@ class Node:
                     time.sleep(0.5)
 
             else:
-                if self.current_state == "RIGHT":
+                if self.current_state['pos'] == "RIGHT":
                     carAdvance(self.arduino, 100, 255)
-                elif self.current_state == "LEFT":
+                elif self.current_state['pos'] == "LEFT":
                     carAdvance(self.arduino, 255, 100)
                 else:
                     carAdvance(self.arduino, 200, 200)

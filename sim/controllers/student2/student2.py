@@ -27,21 +27,22 @@ tube_x = 100
 LEFT_THRESHOLD = -tube_x - 70
 RIGHT_THRESHOLD = tube_x + 70
 
-current_state = 'CENTER'
+current_state = {'pos':'CENTER','intersection':False}
 
-def update_state(distance):
+def update_turn(distance):
     global current_state
-    if current_state == 'CENTER':
+    if current_state['pos'] == 'CENTER':
         if distance > RIGHT_THRESHOLD:
-            current_state = 'RIGHT'
+            current_state['pos'] = 'RIGHT'
         elif distance < LEFT_THRESHOLD:
-            current_state = 'LEFT'
-    elif current_state == 'RIGHT':
+            current_state['pos'] = 'LEFT'
+    elif current_state['pos'] == 'RIGHT':
         if distance < tube_x:
-            current_state = 'CENTER'
-    elif current_state == 'LEFT':
+            current_state['pos'] = 'CENTER'
+    elif current_state['pos'] == 'LEFT':
         if distance > -tube_x:
-            current_state = 'CENTER'
+            current_state['pos'] = 'CENTER'
+    
 
 def set_wheel_velocities(state, speed_constant):
     if state == 'RIGHT':
@@ -117,6 +118,10 @@ while robot.step(TIME_STEP) != -1:
     kernel_dilate = np.ones((4,4), np.uint8)
     dilated_mask = cv2.dilate(eroded_mask, kernel_dilate, iterations=1)
 
+    # 
+    # Line following
+    #
+    
     # Find the different contours and draw them
     contours, hierarchy = cv2.findContours(dilated_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     im2 = cv2.drawContours(image,contours,-1, (0,255,0), 3)
@@ -146,20 +151,40 @@ while robot.step(TIME_STEP) != -1:
         
         # Distance to the center allowing to turn left or right
         distance = cx - w/2
-        if distance > tube_x:
-            direction = ">"
-        elif distance < -tube_x:
-            direction = "<"
-        else:
-            direction = "^"
 
-        cv2.putText(im2, f"{direction} {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)  
+        cv2.putText(im2, f"{distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)  
 
-        update_state(distance)
-        set_wheel_velocities(current_state, speed_constant)
-
+        update_turn(distance)
+        
     else:
         print("No Centroid Found")
     
+    #
+    # Intersection detection
+    #
+    
+    # Draw an horizontal histogram of the white pixels in dilated_mask
+    histogram = np.sum(dilated_mask, axis=1)
+    max_white = np.max(histogram)
+    
+    # Draw the histogram and its max value
+    for i in range(h):
+        cv2.line(im2, (w, i), (w - histogram[i]//255, i), (255,0,0), 1)
+    
+
+    # Check if the max value is above a certain threshold
+    if max_white > 40000: # Value to be adjusted
+        
+        current_state['intersection'] = True
+        
+        cv2.line(im2, (0, np.argmax(histogram)), (w, np.argmax(histogram)), (0, 0, 255), 2)
+        
+    else:
+        current_state['intersection'] = False
+        #cv2.putText(im2, f"MW {max_white}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+
+    set_wheel_velocities(current_state['pos'], speed_constant)
+    
+    cv2.putText(im2, f"{current_state['pos']} INTER {True if current_state['intersection'] else max_white}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow("Image traitée", im2)
     cv2.waitKey(1)

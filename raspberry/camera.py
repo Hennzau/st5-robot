@@ -26,9 +26,9 @@ import numpy as np
 from message import RGBCamera
 from message import LineMiddle
 
+
 class Node:
     def __init__(self):
-
         # =======================
         # Register signal handlers
         # =======================
@@ -43,11 +43,13 @@ class Node:
         # Complete here with your own variables
         # =======================
 
-        self.camera = PiCamera(sensor_mode = 2)
+        self.camera = PiCamera(sensor_mode=2)
         self.camera.resolution = (160, 128)
         self.camera.framerate = 32
         self.raw_capture = PiRGBArray(self.camera, size=self.camera.resolution)
-        self.frame_source = self.camera.capture_continuous(self.raw_capture, format="bgr", use_video_port=True)
+        self.frame_source = self.camera.capture_continuous(
+            self.raw_capture, format="bgr", use_video_port=True
+        )
 
         # =======================
         # Create zenoh session
@@ -60,14 +62,18 @@ class Node:
         # Create zenoh stop handler
         # =======================
 
-        self.stop_handler = self.session.declare_subscriber("happywheels/stop", self.zenoh_stop_signal)
+        self.stop_handler = self.session.declare_subscriber(
+            "happywheels/stop", self.zenoh_stop_signal
+        )
 
         # =======================
         # Complete here with your own pub/sub
         # =======================
 
         self.camera_publisher = self.session.declare_publisher("happywheels/camera")
-        self.line_middle_publisher = self.session.declare_publisher("happywheels/line_middle")
+        self.line_middle_publisher = self.session.declare_publisher(
+            "happywheels/line_middle"
+        )
 
     def run(self):
         while True:
@@ -94,9 +100,9 @@ class Node:
             # print(w, h)
             # Convert to HSV color space
 
-            blur = cv2.blur(frame,(5,5))
-            #ret,thresh1 = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
-            ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
+            blur = cv2.blur(frame, (5, 5))
+            # ret,thresh1 = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
+            ret, thresh1 = cv2.threshold(blur, 168, 255, cv2.THRESH_BINARY)
             hsv = cv2.cvtColor(thresh1, cv2.COLOR_RGB2HSV)
 
             # Define range of white color in HSV
@@ -104,16 +110,18 @@ class Node:
             upper_white = np.array([172, 111, 255])
             # Threshold the HSV image
             mask = cv2.inRange(hsv, lower_white, upper_white)
-            #cv2.imwrite('out_test.png', mask)
+            # cv2.imwrite('out_test.png', mask)
             # Remove noise
-            kernel_erode = np.ones((6,6), np.uint8)
+            kernel_erode = np.ones((6, 6), np.uint8)
 
             eroded_mask = cv2.erode(mask, kernel_erode, iterations=1)
-            kernel_dilate = np.ones((4,4), np.uint8)
+            kernel_dilate = np.ones((4, 4), np.uint8)
             dilated_mask = cv2.dilate(eroded_mask, kernel_dilate, iterations=1)
 
             # Find the different contours
-            contours, hierarchy = cv2.findContours(dilated_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, hierarchy = cv2.findContours(
+                dilated_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+            )
 
             frame = cv2.drawContours(frame, contours, -1, (0, 255, 0), 3)
 
@@ -122,26 +130,48 @@ class Node:
             if len(contours) > 0:
                 M = cv2.moments(contours[0])
                 # Centroid
-                cx = int(M['m10']/M['m00'])
-                cy = int(M['m01']/M['m00'])
+                cx = int(M["m10"] / M["m00"])
+                cy = int(M["m01"] / M["m00"])
                 # print("Centroid of the biggest area: ({}, {})".format(cx, cy))
 
                 # Location of the centroid
                 cv2.circle(frame, (cx, cy), 10, (0, 0, 255), 3)
                 # Vertical line in the center
-                cv2.line(frame, (w//2, 0), (w//2, h), (255, 0, 0), 2)
+                cv2.line(frame, (w // 2, 0), (w // 2, h), (255, 0, 0), 2)
 
                 # Distance to the center allowing to turn left or right
-                distance = cx - w/2
+                distance = cx - w / 2
 
-                self.line_middle_publisher.put(LineMiddle.serialize(LineMiddle(distance)))
+                self.line_middle_publisher.put(
+                    LineMiddle.serialize(LineMiddle(distance))
+                )
 
                 if distance > 0:
-                    cv2.putText(frame, f"R {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+                    cv2.putText(
+                        frame,
+                        f"R {distance}",
+                        (cx, cy),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (255, 0, 0),
+                        2,
+                        cv2.LINE_AA,
+                    )
                 else:
-                    cv2.putText(frame, f"L {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+                    cv2.putText(
+                        frame,
+                        f"L {distance}",
+                        (cx, cy),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (255, 0, 0),
+                        2,
+                        cv2.LINE_AA,
+                    )
 
-            color_frame = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70])[1].tobytes()
+            color_frame = cv2.imencode(
+                ".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70]
+            )[1].tobytes()
 
             # =======================
             # Complete here with your own message
@@ -151,7 +181,7 @@ class Node:
                 rgb=color_frame,
                 width=160,
                 height=128,
-                )
+            )
 
             self.camera_publisher.put(RGBCamera.serialize(image))
 
@@ -196,6 +226,7 @@ class Node:
         self.mutex.acquire()
         self.running = False
         self.mutex.release()
+
 
 if __name__ == "__main__":
     node = Node()

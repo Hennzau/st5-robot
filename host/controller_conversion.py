@@ -8,9 +8,9 @@ import numpy as np
 
 from message import JoyStickController, Motor
 
+
 class MotorControl:
     def __init__(self):
-
         # Register signal handlers
         signal.signal(signal.SIGINT, self.ctrl_c_signal)
         signal.signal(signal.SIGTERM, self.ctrl_c_signal)
@@ -28,9 +28,15 @@ class MotorControl:
         self.session = zenoh.open(config)
 
         # Create zenoh pub/sub
-        self.stop_handler = self.session.declare_subscriber("happywheels/stop", self.zenoh_stop_signal)
-        self.controller_sub = self.session.declare_subscriber("happywheels/controller", self.controller_callback)
-        self.motor_pub = self.session.declare_publisher("happywheels/controller_conversion")
+        self.stop_handler = self.session.declare_subscriber(
+            "happywheels/stop", self.zenoh_stop_signal
+        )
+        self.controller_sub = self.session.declare_subscriber(
+            "happywheels/controller", self.controller_callback
+        )
+        self.motor_pub = self.session.declare_publisher(
+            "happywheels/controller_conversion"
+        )
 
     def run(self):
         while True:
@@ -65,7 +71,7 @@ class MotorControl:
         dec = controller.buttons[6]
         inc = controller.buttons[7]
 
-        if dec and self.gear >=2:
+        if dec and self.gear >= 2:
             self.gear -= 1
         if inc and self.gear <= 9:
             self.gear += 1
@@ -74,7 +80,6 @@ class MotorControl:
 
         motor = Motor(speed=self.speed, steering=self.steering, gear=self.gear)
         self.motor_pub.put(Motor.serialize(motor))
-
 
     def ctrl_c_signal(self, signum, frame):
         # Stop the node
@@ -91,6 +96,7 @@ class MotorControl:
         self.mutex.acquire()
         self.running = False
         self.mutex.release()
+
 
 if __name__ == "__main__":
     node = MotorControl()

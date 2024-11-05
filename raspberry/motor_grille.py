@@ -26,19 +26,24 @@ from message import LineMiddle
 
 import struct
 
+
 def read_i16(f):
-    return struct.unpack('<h', bytearray(f.read(2)))[0]
+    return struct.unpack("<h", bytearray(f.read(2)))[0]
+
 
 def read_i32(f):
-    return struct.unpack('<l', bytearray(f.read(4)))[0]
+    return struct.unpack("<l", bytearray(f.read(4)))[0]
+
 
 def write_i16(f, value):
-    f.write(struct.pack('<h', value))
+    f.write(struct.pack("<h", value))
+
 
 def write_i32(f, value):
-    f.write(struct.pack('<l', value))
+    f.write(struct.pack("<l", value))
 
-def envoiCmdi(arduino, cmd,arg1,arg2,arg3,arg4):
+
+def envoiCmdi(arduino, cmd, arg1, arg2, arg3, arg4):
     arduino.write(cmd)
     write_i16(arduino, arg1)
     write_i16(arduino, arg2)
@@ -46,64 +51,76 @@ def envoiCmdi(arduino, cmd,arg1,arg2,arg3,arg4):
     write_i16(arduino, arg4)
     AttAcquit(arduino)
 
-def envoiCmdl(arduino, cmd,arg1,arg2):
+
+def envoiCmdl(arduino, cmd, arg1, arg2):
     arduino.write(cmd)
     write_i32(arduino, arg1)
     write_i32(arduino, arg2)
     AttAcquit(arduino)
 
-def recupCmdi(arduino,cmd):
+
+def recupCmdi(arduino, cmd):
     arduino.write(cmd)
-    val1=read_i16(arduino)
-    val2=read_i16(arduino)
-    val3=read_i16(arduino)
-    val4=read_i16(arduino)
-    return val1,val2,val3,val4
+    val1 = read_i16(arduino)
+    val2 = read_i16(arduino)
+    val3 = read_i16(arduino)
+    val4 = read_i16(arduino)
+    return val1, val2, val3, val4
     AttAcquit(arduino)
+
 
 def recupCmdl(arduino, cmd):
     arduino.write(cmd)
-    val1=read_i32(arduino)
-    val2=read_i32(arduino)
-    return val1,val2
+    val1 = read_i32(arduino)
+    val2 = read_i32(arduino)
+    return val1, val2
     AttAcquit(arduino)
 
 
 def AttAcquit(arduino):
-    rep=b''
-    while rep==b'':					# attend l'acquitement du B2
-        rep=arduino.readline()
+    rep = b""
+    while rep == b"":  # attend l'acquitement du B2
+        rep = arduino.readline()
 
-def    resetENC(arduino):
-    envoiCmdi(arduino, b'B',0,0,0,0)
 
-def    carStop(arduino):
-    envoiCmdi(arduino, b'C',0,0,0,0)
+def resetENC(arduino):
+    envoiCmdi(arduino, b"B", 0, 0, 0, 0)
 
-def    carStopS(arduino):
-    envoiCmdi(arduino, b'D',0,0,20,0)
 
-def    carAdvance(arduino, v1,v2):
-    envoiCmdi(arduino, b'C',v1,v2,0,0)
+def carStop(arduino):
+    envoiCmdi(arduino, b"C", 0, 0, 0, 0)
 
-def  carAdvanceS(arduino, v1,v2,v3):
-    envoiCmdi(arduino, b'D',v1,v2,v3,0)
 
-def  carBack(arduino, v1,v2):
-    envoiCmdi(arduino, b'C',-v1,-v2,0,0)
+def carStopS(arduino):
+    envoiCmdi(arduino, b"D", 0, 0, 20, 0)
 
-def  carBackS(arduino, v1,v2,v3):
-    envoiCmdi(arduino, b'D',-v1,-v2,v3,0)
 
-def  carTurnLeft(arduino, v1,v2):
-    envoiCmdi(arduino, b'C',v1,-v2,0,0)
+def carAdvance(arduino, v1, v2):
+    envoiCmdi(arduino, b"C", v1, v2, 0, 0)
 
-def  carTurnRight(arduino, v1,v2):
-    envoiCmdi(arduino, b'C',-v1,v2,0,0)
+
+def carAdvanceS(arduino, v1, v2, v3):
+    envoiCmdi(arduino, b"D", v1, v2, v3, 0)
+
+
+def carBack(arduino, v1, v2):
+    envoiCmdi(arduino, b"C", -v1, -v2, 0, 0)
+
+
+def carBackS(arduino, v1, v2, v3):
+    envoiCmdi(arduino, b"D", -v1, -v2, v3, 0)
+
+
+def carTurnLeft(arduino, v1, v2):
+    envoiCmdi(arduino, b"C", v1, -v2, 0, 0)
+
+
+def carTurnRight(arduino, v1, v2):
+    envoiCmdi(arduino, b"C", -v1, v2, 0, 0)
+
 
 class Node:
     def __init__(self):
-
         # =======================
         # Register signal handlers
         # =======================
@@ -118,24 +135,24 @@ class Node:
         # Complete here with your own variables
         # =======================
 
-        self.arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=0.1)
-        rep=' '   # on vide la liaison série
-        while rep!=b'':
-          rep = self.arduino.readline()
-        print ("Connection à l'arduino")
+        self.arduino = serial.Serial(port="/dev/ttyACM0", baudrate=115200, timeout=0.1)
+        rep = " "  # on vide la liaison série
+        while rep != b"":
+            rep = self.arduino.readline()
+        print("Connection à l'arduino")
 
-        time.sleep(2)			# on attend 2s pour que la carte soit initialisée
+        time.sleep(2)  # on attend 2s pour que la carte soit initialisée
 
-        self.arduino.write(b'A22')		# demande de connection avec acquitement par OK
+        self.arduino.write(b"A22")  # demande de connection avec acquitement par OK
         rep = self.arduino.readline()
-        if rep.split()[0]==b'OK':
+        if rep.split()[0] == b"OK":
             print("Connection ok")
 
-            self.arduino.write(b'I0')
+            self.arduino.write(b"I0")
             AttAcquit(self.arduino)
             print(rep.decode())
 
-        self.current_state = 'CENTER'
+        self.current_state = "CENTER"
         self.speed_constant = 500  # Speed constant to control the speed of the robot
         self.tube_x = 20
 
@@ -152,13 +169,17 @@ class Node:
         # Create zenoh stop handler
         # =======================
 
-        self.stop_handler = self.session.declare_subscriber("happywheels/stop", self.zenoh_stop_signal)
+        self.stop_handler = self.session.declare_subscriber(
+            "happywheels/stop", self.zenoh_stop_signal
+        )
 
         # =======================
         # Complete here with your own pub/sub
         # =======================
 
-        self.line_middle_subscriber = self.session.declare_subscriber("happywheels/line_middle", self.line_middle_callback)
+        self.line_middle_subscriber = self.session.declare_subscriber(
+            "happywheels/line_middle", self.line_middle_callback
+        )
 
     def run(self):
         while True:
@@ -210,22 +231,22 @@ class Node:
         self.arduino.close()
 
     def update_state(self, distance):
-        if self.current_state == 'CENTER':
+        if self.current_state == "CENTER":
             if distance > self.right_treshold:
-                self.current_state = 'RIGHT'
+                self.current_state = "RIGHT"
             elif distance < self.left_treshold:
-                self.current_state = 'LEFT'
-        elif self.current_state == 'RIGHT':
+                self.current_state = "LEFT"
+        elif self.current_state == "RIGHT":
             if distance < self.tube_x:
-                self.current_state = 'CENTER'
-        elif self.current_state == 'LEFT':
+                self.current_state = "CENTER"
+        elif self.current_state == "LEFT":
             if distance > -self.tube_x:
-                self.current_state = 'CENTER'
+                self.current_state = "CENTER"
 
     def set_wheel_velocities(self):
-        if self.current_state == 'RIGHT':
+        if self.current_state == "RIGHT":
             carAdvance(self.arduino, 100, 255)
-        elif self.current_state == 'LEFT':
+        elif self.current_state == "LEFT":
             carAdvance(self.arduino, 255, 100)
         else:
             carAdvance(self.arduino, 200, 200)
@@ -253,6 +274,7 @@ class Node:
         self.mutex.acquire()
         self.running = False
         self.mutex.release()
+
 
 if __name__ == "__main__":
     node = Node()

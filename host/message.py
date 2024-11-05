@@ -7,21 +7,25 @@ from pycdr2 import IdlStruct
 from pycdr2.types import uint32, float32, uint8
 from typing import List
 
+
 @dataclass
 class RGBCamera(IdlStruct):
     rgb: bytes
     width: uint32
     height: uint32
 
+
 @dataclass
 class LineMiddle(IdlStruct):
     value: float32
+
 
 @dataclass
 class Motor(IdlStruct):
     speed: float32
     steering: float32
     gear: uint8
+
 
 @dataclass
 class JoyStickController(IdlStruct):

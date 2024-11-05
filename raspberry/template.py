@@ -22,9 +22,9 @@ import numpy as np
 
 from message import RGBCamera as RGBCameraMessage
 
+
 class Node:
     def __init__(self):
-
         # =======================
         # Register signal handlers
         # =======================
@@ -39,7 +39,6 @@ class Node:
         # Complete here with your own variables
         # =======================
 
-
         # =======================
         # Create zenoh session
         # =======================
@@ -51,7 +50,9 @@ class Node:
         # Create zenoh stop handler
         # =======================
 
-        self.stop_handler = self.session.declare_subscriber("happywheels/stop", self.zenoh_stop_signal)
+        self.stop_handler = self.session.declare_subscriber(
+            "happywheels/stop", self.zenoh_stop_signal
+        )
 
         # =======================
         # Complete here with your own pub/sub
@@ -84,7 +85,7 @@ class Node:
                 rgb=bytes([]),
                 width=640,
                 height=480,
-                )
+            )
 
             self.camera_publisher.put(RGBCameraMessage.serialize(image))
 
@@ -128,6 +129,7 @@ class Node:
         self.mutex.acquire()
         self.running = False
         self.mutex.release()
+
 
 if __name__ == "__main__":
     node = Node()

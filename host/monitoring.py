@@ -10,9 +10,9 @@ import dearpygui.dearpygui as dpg
 
 from message import RGBCamera, Motor
 
+
 class Monitoring:
     def __init__(self):
-
         # Register signal handlers
         signal.signal(signal.SIGINT, self.ctrl_c_signal)
         signal.signal(signal.SIGTERM, self.ctrl_c_signal)
@@ -26,19 +26,42 @@ class Monitoring:
         self.height = 960
 
         dpg.create_context()
-        dpg.create_viewport(title='MARCSRover', width=self.width, height=self.height)
+        dpg.create_viewport(title="MARCSRover", width=self.width, height=self.height)
         dpg.setup_dearpygui()
 
         with dpg.texture_registry():
-            dpg.add_raw_texture(640, 480, [], tag="camera_color", format=dpg.mvFormat_Float_rgb)
+            dpg.add_raw_texture(
+                640, 480, [], tag="camera_color", format=dpg.mvFormat_Float_rgb
+            )
 
         with dpg.window(label="camera", width=1280, height=480, pos=(0, 0)):
             dpg.add_image("camera_color", pos=(0, 0))
 
         with dpg.window(label="Controller", width=640, height=480, pos=(640, 480)):
-            dpg.add_slider_float(label="Speed", tag="Speed", width=150, min_value=-4000, max_value=4000, default_value=0)
-            dpg.add_slider_float(label="Steering", tag="Steering", width=150, min_value=-90, max_value=90, default_value=0)
-            dpg.add_slider_int(label="Gear", tag="Gear", width=150, min_value=1, max_value=10, default_value=5)
+            dpg.add_slider_float(
+                label="Speed",
+                tag="Speed",
+                width=150,
+                min_value=-4000,
+                max_value=4000,
+                default_value=0,
+            )
+            dpg.add_slider_float(
+                label="Steering",
+                tag="Steering",
+                width=150,
+                min_value=-90,
+                max_value=90,
+                default_value=0,
+            )
+            dpg.add_slider_int(
+                label="Gear",
+                tag="Gear",
+                width=150,
+                min_value=1,
+                max_value=10,
+                default_value=5,
+            )
 
         # Create zenoh session
         config = zenoh.Config.from_file("host/zenoh_config.json")
@@ -46,8 +69,12 @@ class Monitoring:
 
         # Create zenoh pub/subs
         self.stop_handler = self.session.declare_publisher("happywheels/stop")
-        self.camera_sub = self.session.declare_subscriber("happywheels/camera", self.camera_callback)
-        self.motor_sub = self.session.declare_subscriber("happywheels/controller_conversion", self.motor_callback)
+        self.camera_sub = self.session.declare_subscriber(
+            "happywheels/camera", self.camera_callback
+        )
+        self.motor_sub = self.session.declare_subscriber(
+            "happywheels/controller_conversion", self.motor_callback
+        )
 
     def run(self):
         dpg.show_viewport()
@@ -82,7 +109,7 @@ class Monitoring:
 
         data = np.flip(rgb, 2)
         data = data.ravel()
-        data = np.asarray(data, dtype='f')
+        data = np.asarray(data, dtype="f")
 
         texture_data = np.true_divide(data, 255.0)
         dpg.set_value("camera_color", texture_data)
@@ -94,7 +121,6 @@ class Monitoring:
         dpg.set_value("Speed", motor.speed)
         dpg.set_value("Gear", motor.gear)
 
-
     def ctrl_c_signal(self, signum, frame):
         # Stop the node
 
@@ -103,6 +129,7 @@ class Monitoring:
         self.mutex.release()
 
         # Put your cleanup code here
+
 
 if __name__ == "__main__":
     monitoring = Monitoring()

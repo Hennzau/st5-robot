@@ -3,14 +3,23 @@ import time
 import threading
 
 import pygame
-from pygame.constants import JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN, JOYBUTTONUP, JOYHATMOTION, MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
+from pygame.constants import (
+    JOYAXISMOTION,
+    JOYBALLMOTION,
+    JOYBUTTONDOWN,
+    JOYBUTTONUP,
+    JOYHATMOTION,
+    MOUSEBUTTONDOWN,
+    MOUSEBUTTONUP,
+    MOUSEMOTION,
+)
 import zenoh
 
 from message import JoyStickController
 
+
 class Controller:
     def __init__(self):
-
         # Register signal handlers
         signal.signal(signal.SIGINT, self.ctrl_c_signal)
         signal.signal(signal.SIGTERM, self.ctrl_c_signal)
@@ -24,7 +33,9 @@ class Controller:
 
         self.joycount = pygame.joystick.get_count()
         if self.joycount == 0:
-            print("This program only works with at least one joystick plugged in. No joysticks were detected.")
+            print(
+                "This program only works with at least one joystick plugged in. No joysticks were detected."
+            )
             exit(1)
 
         self.joy = pygame.joystick.Joystick(0)
@@ -51,7 +62,9 @@ class Controller:
         self.session = zenoh.open(config)
 
         # Create zenoh pub/sub
-        self.stop_handler = self.session.declare_subscriber("happywheels/stop", self.zenoh_stop_signal)
+        self.stop_handler = self.session.declare_subscriber(
+            "happywheels/stop", self.zenoh_stop_signal
+        )
 
         self.controller_pub = self.session.declare_publisher("happywheels/controller")
 
@@ -88,7 +101,9 @@ class Controller:
                 elif event.type == JOYBUTTONDOWN:
                     self.button[event.button] = 1
 
-            joystick = JoyStickController(axis=self.axis, buttons=self.button, balls=self.ball)
+            joystick = JoyStickController(
+                axis=self.axis, buttons=self.button, balls=self.ball
+            )
             self.controller_pub.put(JoyStickController.serialize(joystick))
 
         self.close()
@@ -114,6 +129,7 @@ class Controller:
         self.mutex.acquire()
         self.running = False
         self.mutex.release()
+
 
 if __name__ == "__main__":
     controller = Controller()

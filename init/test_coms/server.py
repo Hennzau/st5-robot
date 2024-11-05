@@ -19,8 +19,8 @@ import sys
 server_ip = "192.168.137.1"
 verbose_mode = False
 nodes = list()
-global key # last key hit ?
-key = '' 
+global key  # last key hit ?
+key = ""
 
 
 def main():
@@ -39,11 +39,13 @@ def process_msg(msg):
     default_reply = {"all": "is fine"}
 
     msg_type = {
-      "new node registering": ((msg["cmd"] == "log") and msg["from"] not in nodes),
-      "known node registering": ((msg["cmd"] == "log") and msg["from"] in nodes),
-      "from control": (msg["from"] == "control"),
-      "key request from robot": ((msg["from"] != "control") and (msg["cmd"] == "key"))
-               }
+        "new node registering": ((msg["cmd"] == "log") and msg["from"] not in nodes),
+        "known node registering": ((msg["cmd"] == "log") and msg["from"] in nodes),
+        "from control": (msg["from"] == "control"),
+        "key request from robot": (
+            (msg["from"] != "control") and (msg["cmd"] == "key")
+        ),
+    }
 
     if msg_type["new node registering"]:
         print("new node signing in, adding {} to nodes".format(msg["from"]))
@@ -58,12 +60,11 @@ def process_msg(msg):
             print(nodes)
         reply = {"already": "registered"}
 
-
     elif msg_type["from control"]:
         print("from control")
         if verbose_mode:
             print(msg)
-        if (msg["cmd"] == "key"): 
+        if msg["cmd"] == "key":
             key = msg["key"]
             print(key)
         reply = default_reply
@@ -71,7 +72,7 @@ def process_msg(msg):
     elif msg_type["key request from robot"]:
         print("key request from {}".format(msg["from"]))
         reply = {"key": key}
-        key = ''
+        key = ""
 
     else:
         print("invalid message")
@@ -81,12 +82,13 @@ def process_msg(msg):
         print(reply)
     return reply
 
+
 def create_connection_interface(ip):
     ctx = zmq.Context()
     repsock = ctx.socket(zmq.REP)
     repaddr = "tcp://{}:5005".format(ip)
     repsock.bind(repaddr)
-    
+
     return repsock
 
 

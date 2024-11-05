@@ -107,6 +107,14 @@ class Monitoring:
         rgb = cv2.imdecode(rgb, cv2.IMREAD_COLOR)
         rgb = cv2.resize(rgb, (640, 480))
 
+        h, w = rgb.shape[:2]
+
+        # Vertical line in the center
+        cv2.line(rgb, (w//2, 0), (w//2, h), (0, 255, 0), 2)
+
+        # Turn line
+        cv2.line(rgb, (0, h - h//4), (w, h - h//4), (0, 255, 0), 2)
+
         data = np.flip(rgb, 2)
         data = data.ravel()
         data = np.asarray(data, dtype="f")

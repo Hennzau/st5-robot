@@ -100,46 +100,46 @@ def carTurnRight(v1, v2):
 def TestMoteur():
     steptime = 2  # durée de chaque étape
 
-    if 1 == 1:
-        print("le vehicule avance")
-        carAdvance(150, 150)
-        time.sleep(1 * steptime)
-        carStop()
-        time.sleep(1)
+    # if 1 == 1:
+    #     print("le vehicule avance")
+    #     carAdvance(150, 150)
+    #     time.sleep(1 * steptime)
+    #     carStop()
+    #     time.sleep(1)
 
-    if 1 == 1:
-        print(" le vehicule recule")
-        carBack(150, 150)
-        time.sleep(steptime)
-        carStop()
-        time.sleep(1)
+    # if 1 == 1:
+    #     print(" le vehicule recule")
+    #     carBack(150, 150)
+    #     time.sleep(steptime)
+    #     carStop()
+    #     time.sleep(1)
 
-    if 1 == 1:
-        print(" le vehicule tourne à gauche")
-        carTurnLeft(120, 120)
-        time.sleep(steptime)
-        carStop()
-        time.sleep(1)
+    # if 1 == 1:
+    #     print(" le vehicule tourne à gauche")
+    #     carTurnLeft(120, 120)
+    #     time.sleep(steptime)
+    #     carStop()
+    #     time.sleep(1)
 
-        print(" le vehicule tourne à droite")
-        carTurnRight(120, 120)
-        time.sleep(steptime)
-        carStop()
-        time.sleep(1)
+    #     print(" le vehicule tourne à droite")
+    #     carTurnRight(120, 120)
+    #     time.sleep(steptime)
+    #     carStop()
+    #     time.sleep(1)
 
-    if 1 == 1:
-        print("le vehicule avance progressivement")
-        carAdvanceS(200, 200, 20)
-        time.sleep(3 * steptime)
-        carStop()
-        time.sleep(1)
+    # if 1 == 1:
+    #     print("le vehicule avance progressivement")
+    #     carAdvanceS(200, 200, 20)
+    #     time.sleep(3 * steptime)
+    #     carStop()
+    #     time.sleep(1)
 
-    if 1 == 1:
-        print(" le vehicule recule progressivement")
-        carBackS(200, 200, 20)
-        time.sleep(3 * steptime)
-        carStop()
-        time.sleep(1)
+    # if 1 == 1:
+    #     print(" le vehicule recule progressivement")
+    #     carBackS(200, 200, 20)
+    #     time.sleep(3 * steptime)
+    #     carStop()
+    #     time.sleep(1)
 
     if 1 == 1:
         print("Remise à 0 des encodeurs de position")

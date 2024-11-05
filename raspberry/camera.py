@@ -24,7 +24,7 @@ import numpy as np
 # =======================
 
 from message import RGBCamera
-from message import LineMiddle
+from message import ProcessedImageData
 
 
 class Node:
@@ -71,7 +71,7 @@ class Node:
         # =======================
 
         self.camera_publisher = self.session.declare_publisher("happywheels/camera")
-        self.line_middle_publisher = self.session.declare_publisher(
+        self.processed_image_data = self.session.declare_publisher(
             "happywheels/line_middle"
         )
 
@@ -127,6 +127,8 @@ class Node:
 
             contours = sorted(contours, key=cv2.contourArea, reverse=True)[:1]
 
+            image_data = ProcessedImageData(0, 0, 0, 0, 0)
+
             if len(contours) > 0:
                 M = cv2.moments(contours[0])
                 # Centroid
@@ -141,41 +143,38 @@ class Node:
 
                 # Distance to the center allowing to turn left or right
                 distance = cx - w / 2
+                cv2.putText(frame, f"{distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
-                self.line_middle_publisher.put(
-                    LineMiddle.serialize(LineMiddle(distance))
-                )
-
-                if distance > 0:
-                    cv2.putText(
-                        frame,
-                        f"R {distance}",
-                        (cx, cy),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (255, 0, 0),
-                        2,
-                        cv2.LINE_AA,
-                    )
-                else:
-                    cv2.putText(
-                        frame,
-                        f"L {distance}",
-                        (cx, cy),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (255, 0, 0),
-                        2,
-                        cv2.LINE_AA,
-                    )
+                image_data.distance_to_middle = distance
 
             color_frame = cv2.imencode(
-                ".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70]
-            )[1].tobytes()
+                            ".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70]
+                        )[1].tobytes()
+
+            # Compute horizontal histogram of the white pixels in dilated_mask
+            histogram = np.sum(dilated_mask, axis=1)
+
+            max_white = np.max(histogram)
+            pos_intersection = np.argmax(histogram)
+
+            image_data.pos_intersection = pos_intersection
+            image_data.max_white = max_white
+
+            left_histogram = np.max(np.sum(dilated_mask[:, :w//8], axis=1))
+            right_histogram = np.max(np.sum(dilated_mask[:, 7*w//8:], axis=1))
+            top_histogram = np.max(np.sum(dilated_mask[:h//8, :], axis=0))
+
+
+            image_data.left_histogram = left_histogram
+            image_data.right_histogram = right_histogram
+            image_data.top_histogram = top_histogram
 
             # =======================
             # Complete here with your own message
             # =======================
+            self.processed_image_data.put(
+                ProcessedImageData.serialize(image_data)
+            )
 
             image = RGBCamera(
                 rgb=color_frame,
@@ -203,7 +202,7 @@ class Node:
         # =======================
 
         self.camera_publisher.undeclare()
-        self.line_middle_publisher.undeclare()
+        self.processed_image_data.undeclare()
 
         # =======================
         # Close zenoh session

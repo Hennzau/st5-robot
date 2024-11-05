@@ -14,6 +14,10 @@ import zenoh
 
 import cv2
 
+import random
+
+random.seed(42)
+
 import numpy as np
 
 import serial
@@ -22,7 +26,7 @@ import serial
 # Import the message class
 # =======================
 
-from message import LineMiddle
+from message import ProcessedImageData
 
 import struct
 
@@ -152,7 +156,7 @@ class Node:
             AttAcquit(self.arduino)
             print(rep.decode())
 
-        self.current_state = "CENTER"
+        self.current_state = {'pos':'CENTER','intersection':'NONE', 'intersection_noted' : False, 'stop': False, 'possibilities' : []}
         self.speed_constant = 500  # Speed constant to control the speed of the robot
         self.tube_x = 20
 
@@ -230,33 +234,71 @@ class Node:
         self.session.close()
         self.arduino.close()
 
-    def update_state(self, distance):
-        if self.current_state == "CENTER":
+    def update_turn(self, distance):
+        if self.current_state['pos'] == "CENTER":
             if distance > self.right_treshold:
-                self.current_state = "RIGHT"
+                self.current_state['pos'] = "RIGHT"
             elif distance < self.left_treshold:
-                self.current_state = "LEFT"
-        elif self.current_state == "RIGHT":
+                self.current_state['pos'] = "LEFT"
+        elif self.current_state['pos'] == "RIGHT":
             if distance < self.tube_x:
-                self.current_state = "CENTER"
-        elif self.current_state == "LEFT":
+                self.current_state['pos'] = "CENTER"
+        elif self.current_state['pos'] == "LEFT":
             if distance > -self.tube_x:
-                self.current_state = "CENTER"
+                self.current_state['pos'] = "CENTER"
+
+    def update_intersection(self, max_white, pos_intersection):
+        # Check if the max value is above a certain threshold
+        if max_white > 40000: # Value to be adjusted
+            self.current_state['intersection'] = True
+            if pos_intersection > 128 - 128//4:
+                self.current_state['intersection'] = 'NEAR'
+            else:
+                self.current_state['intersection'] = 'DETECTED'
+
+        else:
+            self.current_state['intersection'] = 'NONE'
 
     def set_wheel_velocities(self):
-        if self.current_state == "RIGHT":
-            carAdvance(self.arduino, 100, 255)
-        elif self.current_state == "LEFT":
-            carAdvance(self.arduino, 255, 100)
+        if not self.current_state['stop']:
+            if self.current_state['intersection'] == 'NEAR' and  self.current_state['possibilities'] != []:
+                order = random.choice(self.current_state['possibilities'])
+
+                if order == 'LEFT':
+                    carAdvance(self.arduino, 255, 100)
+                    time.sleep(0.5)
+                elif order == 'RIGHT':
+                    carAdvance(self.arduino, 100, 255)
+                    time.sleep(0.5)
+
+            else:
+                if self.current_state == "RIGHT":
+                    carAdvance(self.arduino, 100, 255)
+                elif self.current_state == "LEFT":
+                    carAdvance(self.arduino, 255, 100)
+                else:
+                    carAdvance(self.arduino, 200, 200)
         else:
-            carAdvance(self.arduino, 200, 200)
+            carAdvance(self.arduino, 0, 0)
 
     def line_middle_callback(self, sample):
-        line_middle = LineMiddle.deserialize(sample.payload.to_bytes())
-        distance = line_middle.value
+        line_middle = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
-        self.update_state(distance)
-        # print(self.current_state)
+        self.update_turn(line_middle.distance_to_middle)
+        self.update_intersection(line_middle.max_white, line_middle.pos_intersection)
+
+        if self.current_state['intersection'] in ['DETECTED','NEAR']:
+            if np.max(line_middle.left_histogram) > 10000:
+                self.current_state['possibilities'].append('LEFT') if 'LEFT' not in self.current_state['possibilities'] else None
+            if np.max(line_middle.right_histogram) > 10000:
+                self.current_state['possibilities'].append('RIGHT') if 'RIGHT' not in self.current_state['possibilities'] else None
+            if np.max(line_middle.top_histogram) > 10000:
+                self.current_state['possibilities'].append('STRAIGHT') if 'STRAIGHT' not in self.current_state['possibilities'] else None
+            elif 'STRAIGHT' in self.current_state['possibilities']: # This condition should be useless for left and right
+                self.current_state['possibilities'].remove('STRAIGHT')
+        else:
+            self.current_state['possibilities'] = []
+
         self.set_wheel_velocities()
 
     def ctrl_c_signal(self, signum, frame):

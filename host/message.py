@@ -16,8 +16,11 @@ class RGBCamera(IdlStruct):
 
 
 @dataclass
-class LineMiddle(IdlStruct):
-    value: float32
+class ProcessedImageData(IdlStruct):
+    distance_to_middle: float32
+    max_white: float32
+    left_histogram: float32
+    right_histogram: float32
 
 
 @dataclass

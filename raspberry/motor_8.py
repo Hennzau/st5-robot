@@ -22,7 +22,7 @@ import serial
 # Import the message class
 # =======================
 
-from message import LineMiddle
+from message import ProcessedImageData
 
 import struct
 
@@ -252,8 +252,8 @@ class Node:
             carAdvance(self.arduino, 200, 200)
 
     def line_middle_callback(self, sample):
-        line_middle = LineMiddle.deserialize(sample.payload.to_bytes())
-        distance = line_middle.value
+        line_middle = ProcessedImageData.deserialize(sample.payload.to_bytes())
+        distance = line_middle.distance_to_middle
 
         self.update_state(distance)
         # print(self.current_state)

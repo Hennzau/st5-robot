@@ -249,7 +249,7 @@ class Node:
 
     def update_intersection(self, max_white, pos_intersection):
         # Check if the max value is above a certain threshold
-        if max_white > 40000: # Value to be adjusted
+        if max_white > 10000: # Value to be adjusted
             self.current_state['intersection'] = True
             if pos_intersection > 128 - 128//4:
                 self.current_state['intersection'] = 'NEAR'
@@ -284,15 +284,18 @@ class Node:
     def line_middle_callback(self, sample):
         line_middle = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
+        print(line_middle.max_white, line_middle.left_histogram, line_middle.right_histogram, line_middle.top_histogram)
+        print (self.current_state)
+
         self.update_turn(line_middle.distance_to_middle)
         self.update_intersection(line_middle.max_white, line_middle.pos_intersection)
 
         if self.current_state['intersection'] in ['DETECTED','NEAR']:
-            if np.max(line_middle.left_histogram) > 10000:
+            if np.max(line_middle.left_histogram) > 2500:
                 self.current_state['possibilities'].append('LEFT') if 'LEFT' not in self.current_state['possibilities'] else None
-            if np.max(line_middle.right_histogram) > 10000:
+            if np.max(line_middle.right_histogram) > 2500:
                 self.current_state['possibilities'].append('RIGHT') if 'RIGHT' not in self.current_state['possibilities'] else None
-            if np.max(line_middle.top_histogram) > 10000:
+            if np.max(line_middle.top_histogram) > 2500:
                 self.current_state['possibilities'].append('STRAIGHT') if 'STRAIGHT' not in self.current_state['possibilities'] else None
             elif 'STRAIGHT' in self.current_state['possibilities']: # This condition should be useless for left and right
                 self.current_state['possibilities'].remove('STRAIGHT')
@@ -301,7 +304,6 @@ class Node:
 
         self.set_wheel_velocities()
 
-        print (self.current_state)
 
     def ctrl_c_signal(self, signum, frame):
         # Stop the node

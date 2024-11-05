@@ -205,9 +205,9 @@ class Node:
 
     def motor_callback(self, sample):
         motor = Motor.deserialize(sample.payload.to_bytes())
-        speed = motor.speed / 4000 * 255
+        speed = int(motor.speed / 4000 * 255)
 
-        carAdvance(self.arduino, speed - motor.steering, speed + motor.steering)
+        carAdvance(self.arduino, speed - int(motor.steering), speed + int(motor.steering))
 
 
     def ctrl_c_signal(self, signum, frame):

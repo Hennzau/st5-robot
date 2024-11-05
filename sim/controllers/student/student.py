@@ -10,6 +10,17 @@ import math
 # Robot setup
 #####################
 
+#####################
+# Robot control
+#####################
+
+# Diagram of the robot
+
+#      sensors
+# wheels[0] wheels[1]
+# wheels[2] wheels[3]
+
+
 speed_constant = 500  # Speed constant to control the speed of the robot
 tube_x = 100
 
@@ -67,8 +78,6 @@ for i in range(len(wheels_names)):
     wheels.append(robot.getDevice(wheels_names[i]))
     wheels[i].setPosition(float('inf'))
     wheels[i].setVelocity(0.0)
-
-speed_constant = 1.0  # Speed constant to control the speed of the robot
 
 
 #####################
@@ -145,34 +154,6 @@ while robot.step(TIME_STEP) != -1:
             direction = "^"
 
         cv2.putText(im2, f"{direction} {distance}", (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)  
-        
-          
-        #####################
-        # Robot control
-        #####################
-        
-        # Diagram of the robot
-
-        #      sensors
-        # wheels[0] wheels[1]
-        # wheels[2] wheels[3]
-
-        # if distance > tube_x:
-        #     wheels[0].setVelocity(1 * speed_constant)
-        #     wheels[1].setVelocity(0.1 * speed_constant)
-        #     wheels[2].setVelocity(1 * speed_constant)
-        #     wheels[3].setVelocity(0.1 * speed_constant)
-            
-        # elif distance < -tube_x:
-        #     wheels[0].setVelocity(0.1 * speed_constant)
-        #     wheels[1].setVelocity(1 * speed_constant)
-        #     wheels[2].setVelocity(0.1 * speed_constant)
-        #     wheels[3].setVelocity(1 * speed_constant)
-        # else:
-        #     wheels[0].setVelocity(1 * speed_constant)
-        #     wheels[1].setVelocity(1 * speed_constant)
-        #     wheels[2].setVelocity(1 * speed_constant)
-        #     wheels[3].setVelocity(1 * speed_constant)
 
         update_state(distance)
         set_wheel_velocities(current_state, speed_constant)

@@ -137,10 +137,10 @@ class Node:
 
         self.current_state = 'CENTER'
         self.speed_constant = 500  # Speed constant to control the speed of the robot
-        self.tube_x = 100
+        self.tube_x = 20
 
-        self.left_treshold = -self.tube_x - 70
-        self.right_treshold = self.tube_x + 70
+        self.left_treshold = -self.tube_x - 10
+        self.right_treshold = self.tube_x + 10
         # =======================
         # Create zenoh session
         # =======================
@@ -233,7 +233,7 @@ class Node:
         distance = line_middle.value
 
         self.update_state(distance)
-        print(self.current_state)
+        # print(self.current_state)
         self.set_wheel_velocities()
 
     def ctrl_c_signal(self, signum, frame):

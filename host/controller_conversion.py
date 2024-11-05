@@ -28,9 +28,9 @@ class MotorControl:
         self.session = zenoh.open(config)
 
         # Create zenoh pub/sub
-        self.stop_handler = self.session.declare_subscriber("marcsrover/stop", self.zenoh_stop_signal)
-        self.controller_sub = self.session.declare_subscriber("marcsrover/controller", self.controller_callback)
-        self.motor_pub = self.session.declare_publisher("marcsrover/motor")
+        self.stop_handler = self.session.declare_subscriber("happywheels/stop", self.zenoh_stop_signal)
+        self.controller_sub = self.session.declare_subscriber("happywheels/controller", self.controller_callback)
+        self.motor_pub = self.session.declare_publisher("happywheels/controller_conversion")
 
     def run(self):
         while True:

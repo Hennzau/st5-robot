@@ -51,9 +51,9 @@ class Controller:
         self.session = zenoh.open(config)
 
         # Create zenoh pub/sub
-        self.stop_handler = self.session.declare_subscriber("marcsrover/stop", self.zenoh_stop_signal)
+        self.stop_handler = self.session.declare_subscriber("happywheels/stop", self.zenoh_stop_signal)
 
-        self.controller_pub = self.session.declare_publisher("marcsrover/controller")
+        self.controller_pub = self.session.declare_publisher("happywheels/controller")
 
     def run(self):
         while True:

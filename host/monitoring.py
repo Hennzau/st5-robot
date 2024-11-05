@@ -45,9 +45,9 @@ class Monitoring:
         self.session = zenoh.open(config)
 
         # Create zenoh pub/subs
-        self.stop_handler = self.session.declare_publisher("marcsrover/stop")
-        self.camera_sub = self.session.declare_subscriber("marcsrover/camera", self.camera_callback)
-        self.motor_sub = self.session.declare_subscriber("marcsrover/motor", self.motor_callback)
+        self.stop_handler = self.session.declare_publisher("happywheels/stop")
+        self.camera_sub = self.session.declare_subscriber("happywheels/camera", self.camera_callback)
+        self.motor_sub = self.session.declare_subscriber("happywheels/controller_conversion", self.motor_callback)
 
     def run(self):
         dpg.show_viewport()

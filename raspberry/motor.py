@@ -181,6 +181,8 @@ class Node:
             # Complete here with your own message
             # =======================
 
+            time.sleep(1)
+
         # =======================
         # Close the node
         # =======================
@@ -205,7 +207,7 @@ class Node:
         # =======================
 
         self.session.close()
-
+        self.arduino.close()
 
     def update_state(self, distance):
         if self.current_state == 'CENTER':

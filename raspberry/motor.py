@@ -218,7 +218,7 @@ class Node:
                 self.current_state = 'CENTER'
         elif self.current_state == 'LEFT':
             if distance > -self.tube_x:
-                current_state = 'CENTER'
+                self.current_state = 'CENTER'
 
     def set_wheel_velocities(self):
         if self.current_state == 'RIGHT':

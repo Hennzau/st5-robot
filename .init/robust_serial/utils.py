@@ -26,7 +26,7 @@ class CustomQueue(queue.Queue):
             unfinished = self.unfinished_tasks - len(self.queue)
             if unfinished <= 0:
                 if unfinished < 0:
-                    raise ValueError('task_done() called too many times')
+                    raise ValueError("task_done() called too many times")
                 self.all_tasks_done.notify_all()
             self.unfinished_tasks = unfinished
             self.queue.clear()
@@ -39,15 +39,15 @@ def get_serial_ports():
     Lists serial ports.
     :return: ([str]) A list of available serial ports
     """
-    if sys.platform.startswith('win'):
-        ports = ['COM%s' % (i + 1) for i in range(256)]
-    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+    if sys.platform.startswith("win"):
+        ports = ["COM%s" % (i + 1) for i in range(256)]
+    elif sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
         # this excludes your current terminal "/dev/tty"
-        ports = glob.glob('/dev/tty[A-Za-z]*')
-    elif sys.platform.startswith('darwin'):
-        ports = glob.glob('/dev/tty.*')
+        ports = glob.glob("/dev/tty[A-Za-z]*")
+    elif sys.platform.startswith("darwin"):
+        ports = glob.glob("/dev/tty.*")
     else:
-        raise EnvironmentError('Unsupported platform')
+        raise EnvironmentError("Unsupported platform")
 
     results = []
     for port in ports:
@@ -75,4 +75,6 @@ def open_serial_port(serial_port=None, baudrate=115200, timeout=1, write_timeout
         serial_port = get_serial_ports()[0]
     # timeout=0 non-blocking mode, return immediately in any case, returning zero or more,
     # up to the requested number of bytes
-    return serial.Serial(port=serial_port, baudrate=baudrate, timeout=timeout, writeTimeout=write_timeout)
+    return serial.Serial(
+        port=serial_port, baudrate=baudrate, timeout=timeout, writeTimeout=write_timeout
+    )

@@ -53,75 +53,13 @@ def envoiCmdi(arduino, cmd, arg1, arg2, arg3, arg4):
     write_i16(arduino, arg2)
     write_i16(arduino, arg3)
     write_i16(arduino, arg4)
-    AttAcquit(arduino)
 
-
-def envoiCmdl(arduino, cmd, arg1, arg2):
-    arduino.write(cmd)
-    write_i32(arduino, arg1)
-    write_i32(arduino, arg2)
-    AttAcquit(arduino)
-
-
-def recupCmdi(arduino, cmd):
-    arduino.write(cmd)
-    val1 = read_i16(arduino)
-    val2 = read_i16(arduino)
-    val3 = read_i16(arduino)
-    val4 = read_i16(arduino)
-    return val1, val2, val3, val4
-    AttAcquit(arduino)
-
-
-def recupCmdl(arduino, cmd):
-    arduino.write(cmd)
-    val1 = read_i32(arduino)
-    val2 = read_i32(arduino)
-    return val1, val2
-    AttAcquit(arduino)
-
-
-def AttAcquit(arduino):
     rep = b""
     while rep == b"":  # attend l'acquitement du B2
         rep = arduino.readline()
 
-
-def resetENC(arduino):
-    envoiCmdi(arduino, b"B", 0, 0, 0, 0)
-
-
-def carStop(arduino):
-    envoiCmdi(arduino, b"C", 0, 0, 0, 0)
-
-
-def carStopS(arduino):
-    envoiCmdi(arduino, b"D", 0, 0, 20, 0)
-
-
 def carAdvance(arduino, v1, v2):
     envoiCmdi(arduino, b"C", v1, v2, 0, 0)
-
-
-def carAdvanceS(arduino, v1, v2, v3):
-    envoiCmdi(arduino, b"D", v1, v2, v3, 0)
-
-
-def carBack(arduino, v1, v2):
-    envoiCmdi(arduino, b"C", -v1, -v2, 0, 0)
-
-
-def carBackS(arduino, v1, v2, v3):
-    envoiCmdi(arduino, b"D", -v1, -v2, v3, 0)
-
-
-def carTurnLeft(arduino, v1, v2):
-    envoiCmdi(arduino, b"C", v1, -v2, 0, 0)
-
-
-def carTurnRight(arduino, v1, v2):
-    envoiCmdi(arduino, b"C", -v1, v2, 0, 0)
-
 
 class Node:
     def __init__(self):

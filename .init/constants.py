@@ -1,6 +1,7 @@
 """
 File containing all the constants used in the different files
 """
+
 from __future__ import print_function, division, absolute_import
 
 import numpy as np
@@ -15,6 +16,4 @@ MAX_WIDTH = CAMERA_RESOLUTION[0]
 MAX_HEIGHT = CAMERA_RESOLUTION[1]
 
 
-
 BAUDRATE = 115200  # Communication with the Arduino
-

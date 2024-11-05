@@ -301,6 +301,8 @@ class Node:
 
         self.set_wheel_velocities()
 
+        print (self.current_state)
+
     def ctrl_c_signal(self, signum, frame):
         # Stop the node
 

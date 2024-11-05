@@ -7,8 +7,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.3272625577161484 0.22948205263782298 -0.9166445362484938 2.145097768324561
-  position -0.9971444346360825 1.9519348404060413 1.5493455927353887
+  orientation 0.5011094642849004 0.5759291933212216 -0.6459062386170822 1.9606521686817993
+  position -1.283270025597588 1.6814431188649468 6.683246523701457
 }
 TexturedBackground {
 }
@@ -16,20 +16,21 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 4 4
+  floorTileSize 4 4
   floorAppearance Appearance {
     texture ImageTexture {
       url [
-        "huit.jpg"
+        "grille.png"
       ]
     }
     textureTransform TextureTransform {
-      scale 0.1 0.1
-      translation 1 1
+      scale 1.05 1
+      translation -0.97 1
     }
   }
 }
 Robot {
-  translation -1.7575550045320332 0.40866222506614064 0.03972097934011931
+  translation -1.70756 -0.971338 0.039721
   rotation -4.517105359479559e-08 -4.5171867823869544e-08 0.9999999999999981 1.5708143681406508
   children [
     DEF CAM Camera {
@@ -182,5 +183,5 @@ Robot {
     density -1
     mass 1
   }
-  controller "student"
+  controller "student2"
 }

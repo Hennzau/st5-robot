@@ -127,7 +127,7 @@ class Node:
 
             contours = sorted(contours, key=cv2.contourArea, reverse=True)[:1]
 
-            image_data = ProcessedImageData(0, 0, 0, 0, 0)
+            image_data = ProcessedImageData(0, 0, 0, 0, 0, 0)
 
             if len(contours) > 0:
                 M = cv2.moments(contours[0])

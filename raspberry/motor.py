@@ -137,7 +137,7 @@ class Node:
 
         self.current_state = 'CENTER'
         self.speed_constant = 500  # Speed constant to control the speed of the robot
-        self.tube_x = 10
+        self.tube_x = 20
 
         self.left_treshold = -self.tube_x - 5
         self.right_treshold = self.tube_x + 5
@@ -224,9 +224,9 @@ class Node:
 
     def set_wheel_velocities(self):
         if self.current_state == 'RIGHT':
-            carAdvance(self.arduino, 50, 200)
+            carAdvance(self.arduino, 100, 200)
         elif self.current_state == 'LEFT':
-            carAdvance(self.arduino, 200, 50)
+            carAdvance(self.arduino, 200, 100)
         else:
             carAdvance(self.arduino, 200, 200)
 

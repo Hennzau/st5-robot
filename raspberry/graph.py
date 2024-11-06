@@ -29,7 +29,7 @@ class Grille():
         return t in self.arete(s)
 
     def obstacles(self):
-        return [((3, 1), (4, 1)), ((5, 2), (5, 3)), ((3, 3), (3, 4))]
+        return [((1, 2), (1, 3))]
 
     def delete_arete(self, s, t):
         self.arete(s).remove(t)

@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.7.10">
   <diagram name="Page-1" id="b520641d-4fe3-3701-9064-5fc419738815">
-    <mxGraphModel dx="969" dy="847" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1183" dy="847" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -14,13 +14,16 @@
           <mxGeometry y="52" width="160" height="26" as="geometry" />
         </mxCell>
         <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-2" value="Arduino" style="swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;align=center;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="320" y="40" width="160" height="80" as="geometry" />
+          <mxGeometry x="320" y="40" width="160" height="110" as="geometry" />
         </mxCell>
         <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-3" value="IR data" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="xQ2Ws-LIwKOXXfK9XPwc-2">
           <mxGeometry y="26" width="160" height="26" as="geometry" />
         </mxCell>
         <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-4" value="Motor Control" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="xQ2Ws-LIwKOXXfK9XPwc-2">
-          <mxGeometry y="52" width="160" height="26" as="geometry" />
+          <mxGeometry y="52" width="160" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-54" value="Encoders" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="xQ2Ws-LIwKOXXfK9XPwc-2">
+          <mxGeometry y="80" width="160" height="30" as="geometry" />
         </mxCell>
         <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=4;" edge="1" parent="1" source="xQ2Ws-LIwKOXXfK9XPwc-5" target="21ea969265ad0168-18">
           <mxGeometry relative="1" as="geometry" />
@@ -97,7 +100,7 @@
         <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;fillColor=#6a00ff;strokeColor=#3700CC;strokeWidth=4;" edge="1" parent="1" source="xQ2Ws-LIwKOXXfK9XPwc-3" target="xQ2Ws-LIwKOXXfK9XPwc-14">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-40" value="IR Data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xQ2Ws-LIwKOXXfK9XPwc-39">
+        <mxCell id="xQ2Ws-LIwKOXXfK9XPwc-40" value="IR Data, Encoder" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xQ2Ws-LIwKOXXfK9XPwc-39">
           <mxGeometry x="0.1271" y="-1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>

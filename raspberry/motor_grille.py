@@ -101,6 +101,7 @@ class Node:
         self.timer = None
         self.padding_timer = None
         self.grace_timer = None
+        self.intersections = None
 
         self.tube_x = 20
 
@@ -226,12 +227,12 @@ class Node:
         print("Intersection detected : padding started")
 
     def update_state(self, data):
-        intersections = self.get_avaiable_intersections(data)
+        self.intersections = self.get_avaiable_intersections(data)
 
-        if intersections is None:
+        if self.intersections is None:
             self.update_line_following_state(data)
         else:
-            self.update_turning_state(intersections)
+            self.update_turning_state(self.intersections)
 
     def move(self):
         if self.state == "FRONT":
@@ -240,9 +241,9 @@ class Node:
             carAdvance(self.arduino, 255, 100)
         elif self.state == "RIGHT":
             carAdvance(self.arduino, 100, 255)
-        elif self.state == "90RIGHT":
-            carAdvance(self.arduino, 255, -255)
         elif self.state == "90LEFT":
+            carAdvance(self.arduino, 255, -255)
+        elif self.state == "90RIGHT":
             carAdvance(self.arduino, -255, 255)
         elif self.state == "STOP":
             carAdvance(self.arduino, 0, 0)
@@ -260,7 +261,6 @@ class Node:
         if self.grace_timer is not None:
             if time.time() - self.grace_timer > 0.5:
                 self.grace_timer = None
-                self.state = "FRONT"
                 print("Grace period ended")
 
         if self.padding_timer is not None:
@@ -269,8 +269,7 @@ class Node:
                 self.padding_timer = None
 
                 print("Padding ended : ready for manoeuver")
-
-                self.state = "90RIGHT"
+                self.state = random.choices(self.intersections if self.intersections is not None else ["STOP"])
 
         if self.timer is None and self.padding_timer is None and self.grace_timer is None:
             self.update_state(data)

@@ -258,19 +258,19 @@ class Node:
                 print("Manoeuver ended : grace period started")
 
         if self.grace_timer is not None:
-            if time.time() - self.grace_timer > 3.0:
+            if time.time() - self.grace_timer > 1.0:
                 self.grace_timer = None
                 self.state = "FRONT"
                 print("Grace period ended")
 
         if self.padding_timer is not None:
-            if time.time() - self.padding_timer > 0.1:
+            if time.time() - self.padding_timer > 0.2:
                 self.timer = time.time()
                 self.padding_timer = None
 
                 print("Padding ended : ready for manoeuver")
 
-                self.state = "STOP"
+                self.state = "90LEFT"
 
         if self.timer is None and self.padding_timer is None and self.grace_timer is None:
             self.update_state(data)

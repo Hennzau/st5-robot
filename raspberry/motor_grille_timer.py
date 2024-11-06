@@ -282,7 +282,7 @@ class Node:
                 print("Padding ended : ready for manoeuver")
 
                 itin = self.robot.move_to(5,4)
-                self.state = "FRONT"
+                self.state = random.choice(["90RIGHT", "90LEFT", "FRONT"])
 
                 if self.state != "STOP":
                     self.timer = time.time()

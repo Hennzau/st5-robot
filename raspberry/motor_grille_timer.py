@@ -296,7 +296,7 @@ class Node:
 
                 print("Padding ended : ready for manoeuver")
 
-                itin = self.robot.move_to(5,4)
+                itin = self.robot.move_to(2,2)
                 self.state = itin
 
                 if self.state != "STOP":

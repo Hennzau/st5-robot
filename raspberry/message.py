@@ -24,6 +24,10 @@ class ProcessedImageData(IdlStruct):
     right_histogram: float32
     top_histogram: float32
 
+@dataclass
+class TableToDrive(IdlStruct):
+    i: uint32
+    j: uint32
 
 @dataclass
 class Motor(IdlStruct):

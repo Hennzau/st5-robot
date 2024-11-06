@@ -44,7 +44,8 @@ class Node:
         self.state = "FRONT"
         self.timer = None
         self.padding_timer = None
-
+        self.grace_timer = None
+        
         self.tube_x = 20
 
         self.left_treshold = -self.tube_x - 5
@@ -222,14 +223,10 @@ class Node:
                 self.state = "FRONT"
 
     def update_turning_state(self, intersections):
-        if self.padding_timer is None:
-            self.padding_timer = time.time()
-            self.state = "FRONT"
+        self.state = "FRONT"
+        self.padding_timer = time.time()
+        print("Intersection detected : padding started")
 
-        elif time.time() - self.padding_timer > 1.0:
-            self.padding_timer = None
-            self.state = "STOP"
-            self.timer = time.time()
 
     def update_state(self, data):
         intersections = self.get_avaiable_intersections(data)
@@ -273,11 +270,24 @@ class Node:
 
     def processed_image_data(self, data):
         if self.timer is not None:
-            if time.time() - self.timer > 1.0:
+            if time.time() - self.timer > 0.6:
                 self.timer = None
                 self.state = "FRONT"
+                self.grace_timer = time.time()
+        
+        if self.grace_timer is not None:
+            if time.time() - self.grace_timer > 0.3:
+                self.grace_timer = None
+        
+        if self.padding_timer is not None:
+            if time.time() - self.padding_timer > 0.4:
+                self.timer = time.time()
+                self.padding_timer = None
+                print("Padding ended : ready for manoeuver")
+                
+                self.state = "90RIGHT"
 
-        if self.timer is None:
+        if self.timer is None and self.padding_timer is None and self.grace_timer is None:
             self.update_state(data)
 
         self.move()

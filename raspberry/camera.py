@@ -106,7 +106,7 @@ class Node:
             hsv = cv2.cvtColor(thresh1, cv2.COLOR_RGB2HSV)
 
             # Define range of white color in HSV
-            lower_white = np.array([0, 0, 168])
+            lower_white = np.array([0, 0, 195])
             upper_white = np.array([172, 111, 255])
             # Threshold the HSV image
             mask = cv2.inRange(hsv, lower_white, upper_white)

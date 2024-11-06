@@ -14,6 +14,8 @@ import zenoh
 
 import cv2
 
+import graph
+
 import random
 
 random.seed(42)
@@ -107,6 +109,9 @@ class Node:
 
         self.left_treshold = -self.tube_x - 5
         self.right_treshold = self.tube_x + 5
+
+        self.robot = graph.Robot(1, 1, 0)
+
         # =======================
         # Create zenoh session
         # =======================
@@ -210,7 +215,7 @@ class Node:
 
     def update_line_following_state(self, data: ProcessedImageData):
         if self.state == "FRONT":
-            if data.distance_to_middle > self.right_treshold:
+            if 8000 > data.distance_to_middle > self.right_treshold:
                 self.state = "RIGHT"
             elif data.distance_to_middle < self.left_treshold:
                 self.state = "LEFT"
@@ -218,12 +223,13 @@ class Node:
             if data.distance_to_middle < self.tube_x:
                 self.state = "FRONT"
         elif self.state == "LEFT":
-            if data.distance_to_middle > -self.tube_x:
+            if 8000 > data.distance_to_middle > -self.tube_x:
                 self.state = "FRONT"
 
     def update_turning_state(self, intersections):
         self.state = "FRONT"
         self.padding_timer = time.time()
+        self.robot.avance()
         print("Intersection detected : padding started")
 
     def update_state(self, data):
@@ -254,6 +260,12 @@ class Node:
         if self.timer is not None:
             if time.time() - self.timer > 0.55:
                 self.timer = None
+
+                if self.state == "90RIGHT":
+                    self.robot.droite()
+                elif self.state == "90LEFT":
+                    self.robot.gauche()
+
                 self.state = "FRONT"
                 self.grace_timer = time.time()
                 print("Manoeuver ended : grace period started")
@@ -265,11 +277,15 @@ class Node:
 
         if self.padding_timer is not None:
             if time.time() - self.padding_timer > 0.2:
-                self.timer = time.time()
                 self.padding_timer = None
 
                 print("Padding ended : ready for manoeuver")
-                self.state = random.choice(self.intersections if self.intersections is not None else ["STOP"])
+
+                itin = self.robot.move_to(5,5)
+                self.state = itin
+
+                if self.state != "STOP":
+                    self.timer = time.time()
 
         if self.state == "FRONT" and self.timer is not None:
             self.update_line_following_state(data)

@@ -312,5 +312,5 @@ while robot.step(TIME_STEP) != -1:
     # Bottom text
     cv2.putText(im2, f"TRAJ {current_state['possibilities']}", (50, h - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     
-    cv2.imshow("Image traitée", im2)
+    cv2.imshow("Image traitee", im2)
     cv2.waitKey(1)

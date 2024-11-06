@@ -246,7 +246,6 @@ class Node:
 
     def update_state(self, data):
         self.intersections = self.get_avaiable_intersections(data)
-        print(self.intersections)
 
         if self.intersections is None:
             self.update_line_following_state(data)
@@ -313,6 +312,9 @@ class Node:
 
                 if self.state != "STOP":
                     self.manoeuvre_enc = recupCmdl(self.arduino, b"N")
+
+        if self.state == "STOP":
+            return
 
         if self.state == "FRONT" and self.manoeuvre_enc is not None:
             self.update_line_following_state(data)

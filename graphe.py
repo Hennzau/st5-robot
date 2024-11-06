@@ -32,7 +32,7 @@ class Grille():
         return t in self.arete(s)
 
     def obstacles(self):
-        return [((3, 1), (4, 1)), ((5, 2), (5, 3)), ((3, 3), (3, 4))]
+        return [((3, 1), (4, 1)), ((5, 2), (5, 3)), ((3, 3), (3, 4)), ((4,5),(5,5))]
 
     def delete_arete(self, s, t):
         self.arete(s).remove(t)
@@ -185,32 +185,6 @@ class Robot():
             print(f"Je suis au point {s}, et orienté à {self.direction}°")
         print("Je suis arrivé")
 
-if __name__ == '__main__':
-    # R = Robot()
-    # R.move_to(2,2)
-    
-    # Define the grid (1 for unblocked, 0 for blocked)
-    grid = [
-        [1, 0, 1, 1, 1],
-        [1, 1, 1, 0, 1],
-        [1, 1, 1, 0, 1],
-        [0, 0, 1, 1, 1],
-        [1, 1, 1, 0, 1],
-       ]
-    
-    # Define the start and destination
-    start = [1, 1]
-    dest = [5, 5]
-    
-    R = Robot(start[0], start[1])
-    
-    Path, dist = a_star_search(grid, start, dest)
-    
-    if Path != []:
-        for p in Path:
-            R.move_to(p[0],p[1])
-    else:
-        pass
         
 
     

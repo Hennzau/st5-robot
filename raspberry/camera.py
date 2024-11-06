@@ -102,7 +102,7 @@ class Node:
 
             blur = cv2.blur(frame, (5, 5))
             # ret,thresh1 = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
-            ret, thresh1 = cv2.threshold(blur, 168, 255, cv2.THRESH_BINARY)
+            ret, thresh1 = cv2.threshold(blur, 195, 255, cv2.THRESH_BINARY)
             hsv = cv2.cvtColor(thresh1, cv2.COLOR_RGB2HSV)
 
             # Define range of white color in HSV

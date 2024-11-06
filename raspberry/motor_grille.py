@@ -97,6 +97,8 @@ class Node:
         # state will be either "FRONT","LEFT","RIGHT", "90RIGHT", "90LEFT", "STOP"
         self.state = "FRONT"
         self.timer = None
+        self.padding_timer = None
+        self.grace_timer = None
 
         self.tube_x = 20
 
@@ -184,16 +186,22 @@ class Node:
 
         intersections = None
 
-        if data.pos_intersection > 128 - 128 // 2: # Check only for NEAR intersections
-            if np.max(data.left_histogram) > 2500:
-                intersections = ["LEFT"] if intersections is None else intersections.append("LEFT")
+        if data.max_white > 7500:
+            if data.pos_intersection > 128 - 128 // 2: # Check only for NEAR intersections
+                if np.max(data.left_histogram) > 2500:
+                    intersections = ["LEFT"]
 
-            if np.max(data.right_histogram) > 2500:
-                intersections = ["RIGHT"] if intersections is None else intersections.append("RIGHT")
+                if np.max(data.right_histogram) > 2500:
+                    if intersections is None:
+                        intersections = ["RIGHT"]
+                    else:
+                        intersections.append("RIGHT")
 
-            if np.max(data.top_histogram) > 2500:
-                if intersections is not None:
-                    intersections.append("FRONT")
+                if np.max(data.top_histogram) > 2500:
+                    if intersections is not None:
+                        intersections.append("FRONT")
+
+        print (intersections, data.max_white, data.pos_intersection, data.left_histogram, data.right_histogram, data.top_histogram)
 
         return intersections
 
@@ -211,8 +219,9 @@ class Node:
                 self.state = "FRONT"
 
     def update_turning_state(self, intersections):
-        self.state = random.choice(intersections)
-        self.timer = time.time()
+        self.state = "STOP"
+        self.padding_timer = time.time()
+        print("Intersection detected : padding started")
 
     def update_state(self, data):
         intersections = self.get_avaiable_intersections(data)
@@ -240,11 +249,27 @@ class Node:
         data = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
         if self.timer is not None:
-            if time.time() - self.timer > 0.3:
+            if time.time() - self.timer > 3.0:
                 self.timer = None
-                self.state = "FRONT"
+                self.state = "STOP"
+                self.grace_timer = time.time()
+                print("Manoeuver ended : grace period started")
 
-        if self.timer is None:
+        if self.grace_timer is not None:
+            if time.time() - self.grace_timer > 3.0:
+                self.grace_timer = None
+                print("Grace period ended")
+
+        if self.padding_timer is not None:
+            if time.time() - self.padding_timer > 3.0:
+                self.timer = time.time()
+                self.padding_timer = None
+
+                print("Padding ended : ready for manoeuver")
+
+                self.state = "STOP"
+
+        if self.timer is None and self.padding_timer is None and self.grace_timer is None:
             self.update_state(data)
 
         self.move()

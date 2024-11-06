@@ -251,7 +251,7 @@ class Node:
         data = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
         if self.timer is not None:
-            if time.time() - self.timer > 0.50:
+            if time.time() - self.timer > 0.55:
                 self.timer = None
                 self.state = "FRONT"
                 self.grace_timer = time.time()
@@ -274,6 +274,8 @@ class Node:
 
         if self.timer is None and self.padding_timer is None and self.grace_timer is None:
             self.update_state(data)
+        elif self.grace_timer is not None:
+            self.update_line_following_state(data)
 
         self.move()
 

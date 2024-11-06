@@ -250,6 +250,8 @@ class Node:
     def processed_image_data_callback(self, sample):
         data = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
+        print("ohahzda")
+
         if self.timer is not None:
             if time.time() - self.timer > 3.0:
                 self.timer = None

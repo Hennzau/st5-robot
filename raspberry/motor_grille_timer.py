@@ -60,8 +60,10 @@ def envoiCmdi(arduino, cmd, arg1, arg2, arg3, arg4):
     while rep == b"":  # attend l'acquitement du B2
         rep = arduino.readline()
 
+
 def resetENC(arduino):
     envoiCmdi(arduino, b"B", 0, 0, 0, 0)
+
 
 def recupCmdl(arduino, cmd):
     arduino.write(cmd)
@@ -73,6 +75,7 @@ def recupCmdl(arduino, cmd):
 
 def carAdvance(arduino, v1, v2):
     envoiCmdi(arduino, b"C", v1, v2, 0, 0)
+
 
 class Node:
     def __init__(self):
@@ -206,7 +209,9 @@ class Node:
         intersections = None
 
         if data.max_white > 7500:
-            if data.pos_intersection > 128 - 128 // 2: # Check only for NEAR intersections
+            if (
+                data.pos_intersection > 128 - 128 // 2
+            ):  # Check only for NEAR intersections
                 if np.max(data.left_histogram) > 2500:
                     intersections = ["90LEFT"]
 
@@ -296,7 +301,7 @@ class Node:
                 enc1, enc2 = recupCmdl(self.arduino, b"N")
                 print(enc1, enc2)
 
-                itin = self.robot.move_to(2,2)
+                itin = self.robot.move_to(2, 2)
                 self.state = itin
 
                 if self.state != "STOP":
@@ -304,7 +309,11 @@ class Node:
 
         if self.state == "FRONT" and self.timer is not None:
             self.update_line_following_state(data)
-        elif self.timer is None and self.padding_timer is None and self.grace_timer is None:
+        elif (
+            self.timer is None
+            and self.padding_timer is None
+            and self.grace_timer is None
+        ):
             self.update_state(data)
         elif self.grace_timer is not None:
             self.update_line_following_state(data)

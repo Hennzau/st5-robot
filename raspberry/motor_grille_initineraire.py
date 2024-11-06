@@ -58,8 +58,10 @@ def envoiCmdi(arduino, cmd, arg1, arg2, arg3, arg4):
     while rep == b"":  # attend l'acquitement du B2
         rep = arduino.readline()
 
+
 def carAdvance(arduino, v1, v2):
     envoiCmdi(arduino, b"C", v1, v2, 0, 0)
+
 
 class Node:
     def __init__(self):
@@ -190,7 +192,9 @@ class Node:
         intersections = None
 
         if data.max_white > 7500:
-            if data.pos_intersection > 128 - 128 // 2: # Check only for NEAR intersections
+            if (
+                data.pos_intersection > 128 - 128 // 2
+            ):  # Check only for NEAR intersections
                 if np.max(data.left_histogram) > 2500:
                     intersections = ["90LEFT"]
 
@@ -269,11 +273,17 @@ class Node:
                 self.padding_timer = None
 
                 print("Padding ended : ready for manoeuver")
-                self.state = random.choice(self.intersections if self.intersections is not None else ["STOP"])
+                self.state = random.choice(
+                    self.intersections if self.intersections is not None else ["STOP"]
+                )
 
         if self.state == "FRONT" and self.timer is not None:
             self.update_line_following_state(data)
-        elif self.timer is None and self.padding_timer is None and self.grace_timer is None:
+        elif (
+            self.timer is None
+            and self.padding_timer is None
+            and self.grace_timer is None
+        ):
             self.update_state(data)
         elif self.grace_timer is not None:
             self.update_line_following_state(data)

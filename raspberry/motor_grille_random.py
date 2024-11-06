@@ -58,8 +58,10 @@ def envoiCmdi(arduino, cmd, arg1, arg2, arg3, arg4):
     while rep == b"":  # attend l'acquitement du B2
         rep = arduino.readline()
 
+
 def carAdvance(arduino, v1, v2):
     envoiCmdi(arduino, b"C", v1, v2, 0, 0)
+
 
 class Node:
     def __init__(self):
@@ -188,7 +190,9 @@ class Node:
         intersections = None
 
         if data.max_white > 7500:
-            if data.pos_intersection > 128 - 128 // 2: # Check only for NEAR intersections
+            if (
+                data.pos_intersection > 128 - 128 // 2
+            ):  # Check only for NEAR intersections
                 if np.max(data.left_histogram) > 2500:
                     intersections = ["90LEFT"]
 
@@ -252,7 +256,7 @@ class Node:
     def update_catch_line(self, data):
         if self.state == "90RIGHT":
             if data.distance_to_middle > 8000:
-                self.state = "90RIGHT" # Nothing changes
+                self.state = "90RIGHT"  # Nothing changes
                 print("Still turning right")
             elif data.distance_to_middle > 30:
                 print("Line back")
@@ -265,7 +269,6 @@ class Node:
                 print("Line back")
                 self.state = "FRONT"
 
-
     def processed_image_data_callback(self, sample):
         data = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
@@ -275,7 +278,9 @@ class Node:
                 self.padding_timer = None
 
                 print("Padding ended : ready for manoeuver")
-                self.state = random.choice(self.intersections if self.intersections is not None else ["STOP"])
+                self.state = random.choice(
+                    self.intersections if self.intersections is not None else ["STOP"]
+                )
                 print("Décision : ", self.state)
                 self.update_catch_line(data)
 

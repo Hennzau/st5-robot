@@ -60,8 +60,10 @@ def envoiCmdi(arduino, cmd, arg1, arg2, arg3, arg4):
     while rep == b"":  # attend l'acquitement du B2
         rep = arduino.readline()
 
+
 def resetENC(arduino):
     envoiCmdi(arduino, b"B", 0, 0, 0, 0)
+
 
 def recupCmdl(arduino, cmd):
     arduino.write(cmd)
@@ -73,6 +75,7 @@ def recupCmdl(arduino, cmd):
 
 def carAdvance(arduino, v1, v2):
     envoiCmdi(arduino, b"C", v1, v2, 0, 0)
+
 
 class Node:
     def __init__(self):
@@ -208,7 +211,9 @@ class Node:
         intersections = None
 
         if data.max_white > 7500:
-            if data.pos_intersection > 128 - 128 // 2: # Check only for NEAR intersections
+            if (
+                data.pos_intersection > 128 - 128 // 2
+            ):  # Check only for NEAR intersections
                 if np.max(data.left_histogram) > 2500:
                     intersections = ["90LEFT"]
 
@@ -275,10 +280,16 @@ class Node:
             turn_terminated = False
 
             if self.state == "90RIGHT":
-                if encoder[0] - self.manoeuvre_enc[0] < -189 and encoder[1] - self.manoeuvre_enc[1] > 264:
+                if (
+                    encoder[0] - self.manoeuvre_enc[0] < -189
+                    and encoder[1] - self.manoeuvre_enc[1] > 264
+                ):
                     turn_terminated = True
             elif self.state == "90LEFT":
-                if encoder[1] - self.manoeuvre_enc[1] < -189 and encoder[0] - self.manoeuvre_enc[0] > 264:
+                if (
+                    encoder[1] - self.manoeuvre_enc[1] < -189
+                    and encoder[0] - self.manoeuvre_enc[0] > 264
+                ):
                     turn_terminated = True
 
             if turn_terminated == True:
@@ -299,7 +310,10 @@ class Node:
                 print("Grace period ended")
 
         if self.padding_enc is not None:
-            if encoder[0] - self.padding_enc[0] > 80 and encoder[1] - self.padding_enc[1] > 80:
+            if (
+                encoder[0] - self.padding_enc[0] > 80
+                and encoder[1] - self.padding_enc[1] > 80
+            ):
                 self.padding_enc = None
                 self.robot.avance()
 
@@ -307,7 +321,7 @@ class Node:
                 enc1, enc2 = recupCmdl(self.arduino, b"N")
                 print(enc1, enc2)
 
-                itin = self.robot.move_to(4,3)
+                itin = self.robot.move_to(4, 3)
                 self.state = itin
 
                 if self.state != "STOP" and self.state != "FRONT":
@@ -316,12 +330,16 @@ class Node:
         if self.state != "STOP":
             if self.state == "FRONT" and self.manoeuvre_enc is not None:
                 self.update_line_following_state(data)
-            elif self.manoeuvre_enc is None and self.padding_enc is None and self.grace_timer is None:
+            elif (
+                self.manoeuvre_enc is None
+                and self.padding_enc is None
+                and self.grace_timer is None
+            ):
                 self.update_state(data)
             elif self.grace_timer is not None:
                 self.update_line_following_state(data)
 
-        print (self.state, self.manoeuvre_enc, self.padding_enc, self.grace_timer)
+        print(self.state, self.manoeuvre_enc, self.padding_enc, self.grace_timer)
 
         self.move()
 

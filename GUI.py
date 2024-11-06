@@ -85,4 +85,4 @@ def user_input():
     app.exec()
     return (window.table, window.t_id)
 
-# print(user_input())
+print(user_input())

@@ -68,7 +68,19 @@ class Node:
             self.wheels.append(self.robot.getDevice(self.wheels_names[i]))
             self.wheels[i].setPosition(float('inf'))
             self.wheels[i].setVelocity(0.0)
-
+            
+        
+        # Sensors and variables to save the readings at the start of a manoeuver
+        
+        self.r_sensor_mem = None
+        self.l_sensor_mem = None
+        
+        self.sensors = []
+        self.sensors_names = ['s1', 's2', 's3', 's4']
+        for i in range(4):
+            self.sensors.append(self.robot.getDevice(self.sensors_names[i]))
+            self.sensors[i].enable(self.time_step)
+        
     def run(self):
         while self.robot.step(self.time_step) != -1:
             # =======================
@@ -158,6 +170,10 @@ class Node:
 
             self.processed_image_data(data)
 
+            # # Print the readings of the sensors
+            # for i in range(4):
+            #     print(f"Sensor {i+1} : {self.sensors[i].getValue()}")
+            
             # Vertical line in the center
             cv2.line(image, (w//2, 0), (w//2, h), (0, 255, 0), 2)
             # Two vertical lines, one at 100px from the center, the other at -100px
@@ -192,23 +208,27 @@ class Node:
 
         intersections = None
 
-        if data.max_white > 30000:
-            if data.pos_intersection > 480 - 480 // 3:
+        if data.max_white > 50000:
+            if data.pos_intersection > 480 - 480 // 4:
 
                 if np.max(data.left_histogram) > 10000:
+                    print(np.max(data.left_histogram))
+                    print(np.argmax(data.left_histogram))
                     intersections = ["90LEFT"]
 
                 if np.max(data.right_histogram) > 10000:
+                    print(np.max(data.right_histogram))
+                    print(np.argmax(data.right_histogram))
                     if intersections is None:
                         intersections = ["90RIGHT"]
                     else:
                         intersections.append("90RIGHT")
 
-                if np.max(data.top_histogram) > 10000:
+                if np.max(data.top_histogram) > 20000:
                     if intersections is not None:
                         intersections.append("FRONT")
 
-        print (intersections, data.max_white, data.pos_intersection, data.left_histogram, data.right_histogram, data.top_histogram)
+        # print (intersections, data.max_white, data.pos_intersection, data.left_histogram, data.right_histogram, data.top_histogram)
 
         return intersections
 
@@ -245,30 +265,30 @@ class Node:
 
     def move(self):
         if self.state == "FRONT":
-            self.wheels[0].setVelocity(1 * 10)
-            self.wheels[1].setVelocity(1 * 10)
-            self.wheels[2].setVelocity(1 * 10)
-            self.wheels[3].setVelocity(1 * 10)
+            self.wheels[0].setVelocity(1 * 3)
+            self.wheels[1].setVelocity(1 * 3)
+            self.wheels[2].setVelocity(1 * 3)
+            self.wheels[3].setVelocity(1 * 3)
         elif self.state == "LEFT":
-            self.wheels[0].setVelocity(0 * 10)
-            self.wheels[1].setVelocity(1 * 10)
-            self.wheels[2].setVelocity(0 * 10)
-            self.wheels[3].setVelocity(1 * 10)
+            self.wheels[0].setVelocity(0 * 3)
+            self.wheels[1].setVelocity(1 * 3)
+            self.wheels[2].setVelocity(0 * 3)
+            self.wheels[3].setVelocity(1 * 3)
         elif self.state == "RIGHT":
-            self.wheels[0].setVelocity(1 * 10)
-            self.wheels[1].setVelocity(0 * 10)
-            self.wheels[2].setVelocity(1 * 10)
-            self.wheels[3].setVelocity(0 * 10)
+            self.wheels[0].setVelocity(1 * 3)
+            self.wheels[1].setVelocity(0 * 3)
+            self.wheels[2].setVelocity(1 * 3)
+            self.wheels[3].setVelocity(0 * 3)
         elif self.state == "90RIGHT":
-            self.wheels[0].setVelocity(1 * 10)
-            self.wheels[1].setVelocity(-1 * 10)
-            self.wheels[2].setVelocity(1 * 10)
-            self.wheels[3].setVelocity(-1 * 10)
+            self.wheels[0].setVelocity(1 * 3)
+            self.wheels[1].setVelocity(-1 * 3)
+            self.wheels[2].setVelocity(1 * 3)
+            self.wheels[3].setVelocity(-1 * 3)
         elif self.state == "90LEFT":
-            self.wheels[0].setVelocity(-1 * 10)
-            self.wheels[1].setVelocity(1 * 10)
-            self.wheels[2].setVelocity(-1 * 10)
-            self.wheels[3].setVelocity(1 * 10)
+            self.wheels[0].setVelocity(-1 * 3)
+            self.wheels[1].setVelocity(1 * 3)
+            self.wheels[2].setVelocity(-1 * 3)
+            self.wheels[3].setVelocity(1 * 3)
         elif self.state == "STOP":
             self.wheels[0].setVelocity(0)
             self.wheels[1].setVelocity(0)
@@ -276,31 +296,54 @@ class Node:
             self.wheels[3].setVelocity(0)
     
     def turn(self, data):
+        # if self.state == "90RIGHT":
+        #     if data.distance_to_middle == None:
+        #         self.state = "90RIGHT" # Nothing changes
+        #         print("Still turning right")
+        #     elif data.distance_to_middle > 50:
+        #         print("Line back")
+        #         self.state = "FRONT"
+        # elif self.state == "90LEFT":
+        #     if data.distance_to_middle == None:
+        #         self.state = "90LEFT"
+        #         print("Still turning left")
+        #     elif data.distance_to_middle < -50:
+        #         print("Line back")
+        #         self.state = "FRONT"
         if self.state == "90RIGHT":
-            if data.distance_to_middle == None:
+            err = abs(self.sensors[0].getValue() - self.r_sensor_mem)
+            print(err)
+            if err < 3.8:
                 self.state = "90RIGHT" # Nothing changes
                 print("Still turning right")
-            elif data.distance_to_middle > 50:
-                print("Line back")
+            else:
+                print("Turn completed")
                 self.state = "FRONT"
         elif self.state == "90LEFT":
-            if data.distance_to_middle == None:
+            err = abs(self.sensors[1].getValue() - self.l_sensor_mem)
+            print(err)
+            if err < 3.8:
                 self.state = "90LEFT"
                 print("Still turning left")
-            elif data.distance_to_middle < -50:
-                print("Line back")
+            else:
+                print("Turn completed")
                 self.state = "FRONT"
 
     def processed_image_data(self, data):
 
         if self.padding_timer is not None:
-            if time.time() - self.padding_timer > 0.2:
+            if time.time() - self.padding_timer > 1.1:
                 self.timer = time.time()
                 self.padding_timer = None
                 print("Padding ended : ready for manoeuver")
                 
                 self.state = random.choice(self.intersections)
                 print(self.state)
+                
+                # Save the sensors values at the start of the manoeuver
+                self.r_sensor_mem = self.sensors[0].getValue()
+                self.l_sensor_mem = self.sensors[1].getValue()
+                
                 self.turn(data)
 
         if self.padding_timer is None and self.state not in ["90RIGHT", "90LEFT"]:

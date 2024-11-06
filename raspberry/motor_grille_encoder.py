@@ -313,15 +313,13 @@ class Node:
                 if self.state != "STOP":
                     self.manoeuvre_enc = recupCmdl(self.arduino, b"N")
 
-        if self.state == "STOP":
-            return
-
-        if self.state == "FRONT" and self.manoeuvre_enc is not None:
-            self.update_line_following_state(data)
-        elif self.manoeuvre_enc is None and self.padding_enc is None and self.grace_timer is None:
-            self.update_state(data)
-        elif self.grace_timer is not None:
-            self.update_line_following_state(data)
+        if self.state != "STOP":
+            if self.state == "FRONT" and self.manoeuvre_enc is not None:
+                self.update_line_following_state(data)
+            elif self.manoeuvre_enc is None and self.padding_enc is None and self.grace_timer is None:
+                self.update_state(data)
+            elif self.grace_timer is not None:
+                self.update_line_following_state(data)
 
         self.move()
 

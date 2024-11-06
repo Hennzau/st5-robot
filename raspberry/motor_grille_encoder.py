@@ -299,7 +299,7 @@ class Node:
                 print("Grace period ended")
 
         if self.padding_enc is not None:
-            if encoder[0] - self.padding_enc[0] > 70 and encoder[1] - self.padding_enc[1] > 70:
+            if encoder[0] - self.padding_enc[0] > 80 and encoder[1] - self.padding_enc[1] > 80:
                 self.padding_enc = None
                 self.robot.avance()
 

@@ -123,7 +123,7 @@ class Node:
         self.left_treshold = -self.tube_x - 5
         self.right_treshold = self.tube_x + 5
 
-        self.robot = graph.Robot(3, 1, 0)
+        self.robot = graph.Robot(1, 1, 0)
 
         # =======================
         # Create zenoh session
@@ -307,7 +307,7 @@ class Node:
                 enc1, enc2 = recupCmdl(self.arduino, b"N")
                 print(enc1, enc2)
 
-                itin = self.robot.move_to(2,2)
+                itin = self.robot.move_to(4,3)
                 self.state = itin
 
                 if self.state != "STOP":

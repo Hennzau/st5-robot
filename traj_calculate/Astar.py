@@ -172,13 +172,10 @@ def a_star_search(grid, src, dest):
     # If the destination is not found after visiting all cells
     if not found_dest:
         print("Failed to find the destination cell")
-        
-# Driver Code
 
 
-if __name__ == '__main__':
-    # R = Robot()
-    # R.move_to(2,2)
+#Implement A* to drive the robot
+def AstarMove(start, dest):
     
     # Define the grid (1 for unblocked, 0 for blocked)
     grid = [
@@ -189,9 +186,6 @@ if __name__ == '__main__':
         [1, 1, 1, 0, 1],
        ]
     
-    # Define the start and destination
-    start = [1, 1]
-    dest = [5, 5]
     
     R = Robot(start[0], start[1])
     
@@ -202,6 +196,11 @@ if __name__ == '__main__':
             R.move_to(p[0],p[1])
     else:
         pass
+    
+    return
+
+if __name__ == '__main__':
+    AstarMove([1, 1], [5, 5])
 
 
 

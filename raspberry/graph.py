@@ -125,15 +125,13 @@ class Robot():
 
     def move_to(self, ifin=1, jfin=1): # -> GAUCHE, RIGHT, AVANCE, RECULE
         itineraire = self.itineraire(ifin, jfin)
-        print(f"Voici mon itinéraire initial :\n{itineraire}")
+        print(f"itinéraire initial :\n{itineraire}")
         s = itineraire.pop(0)
-        print(f"Je suis orienté à {self.direction}°")
 
         if len(itineraire) == 0:
             return "STOP"
 
         t = itineraire.pop(0)
-        print(f"Direction le point {t}")
 
         target = 0
 

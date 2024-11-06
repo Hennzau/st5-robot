@@ -242,8 +242,6 @@ class Node:
     def update_turning_state(self, intersections):
         self.state = "FRONT"
         self.padding_enc = recupCmdl(self.arduino, b"N")
-
-        self.robot.avance()
         print("Intersection detected : padding started")
 
     def update_state(self, data):
@@ -303,6 +301,7 @@ class Node:
         if self.padding_enc is not None:
             if encoder[0] - self.padding_enc[0] > 70 and encoder[1] - self.padding_enc[1] > 70:
                 self.padding_enc = None
+                self.robot.avance()
 
                 print("Padding ended : ready for manoeuver")
                 enc1, enc2 = recupCmdl(self.arduino, b"N")

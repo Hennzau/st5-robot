@@ -192,13 +192,13 @@ class Node:
         if data.max_white > 7500:
             if data.pos_intersection > 128 - 128 // 2: # Check only for NEAR intersections
                 if np.max(data.left_histogram) > 2500:
-                    intersections = ["LEFT"]
+                    intersections = ["90LEFT"]
 
                 if np.max(data.right_histogram) > 2500:
                     if intersections is None:
-                        intersections = ["RIGHT"]
+                        intersections = ["90RIGHT"]
                     else:
-                        intersections.append("RIGHT")
+                        intersections.append("90RIGHT")
 
                 if np.max(data.top_histogram) > 2500:
                     if intersections is not None:
@@ -269,7 +269,7 @@ class Node:
                 self.padding_timer = None
 
                 print("Padding ended : ready for manoeuver")
-                self.state = "90LEFT"
+                self.state = random.choices(self.intersections if self.intersections is not None else ["STOP"])
 
         if self.timer is None and self.padding_timer is None and self.grace_timer is None:
             self.update_state(data)

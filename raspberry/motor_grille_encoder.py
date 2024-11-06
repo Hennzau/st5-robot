@@ -310,7 +310,7 @@ class Node:
                 itin = self.robot.move_to(4,3)
                 self.state = itin
 
-                if self.state != "STOP" and self.state != "FRONT"
+                if self.state != "STOP" and self.state != "FRONT":
                     self.manoeuvre_enc = recupCmdl(self.arduino, b"N")
 
         if self.state != "STOP":

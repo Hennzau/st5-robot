@@ -254,14 +254,14 @@ class Node:
             if data.distance_to_middle > 8000:
                 self.state = "90RIGHT" # Nothing changes
                 print("Still turning right")
-            elif data.distance_to_middle > 50:
+            elif data.distance_to_middle > 20:
                 print("Line back")
                 self.state = "FRONT"
         elif self.state == "90LEFT":
             if data.distance_to_middle > 8000:
                 self.state = "90LEFT"
                 print("Still turning left")
-            elif data.distance_to_middle < -50:
+            elif data.distance_to_middle < -20:
                 print("Line back")
                 self.state = "FRONT"
 

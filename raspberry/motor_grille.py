@@ -221,7 +221,7 @@ class Node:
                 self.state = "FRONT"
 
     def update_turning_state(self, intersections):
-        self.state = "STOP"
+        self.state = "FRONT"
         self.padding_timer = time.time()
         print("Intersection detected : padding started")
 

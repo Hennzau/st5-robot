@@ -269,8 +269,7 @@ class Node:
                 self.padding_timer = None
 
                 print("Padding ended : ready for manoeuver")
-                print(random.choice(self.intersections if self.intersections is not None else ["STOP"]))
-                self.state = "90RIGHT"
+                self.state = random.choice(self.intersections if self.intersections is not None else ["STOP"])
 
         if self.timer is None and self.padding_timer is None and self.grace_timer is None:
             self.update_state(data)

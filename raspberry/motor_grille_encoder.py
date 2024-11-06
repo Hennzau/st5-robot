@@ -123,7 +123,7 @@ class Node:
         self.left_treshold = -self.tube_x - 5
         self.right_treshold = self.tube_x + 5
 
-        self.robot = graph.Robot(1, 1, 0)
+        self.robot = graph.Robot(3, 1, 0)
 
         # =======================
         # Create zenoh session

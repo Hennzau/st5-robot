@@ -190,10 +190,12 @@ def AstarMove(start, dest):
     R = Robot(start[0], start[1])
     
     Path, dist = a_star_search(grid, start, dest)
+    print(Path)
     
     if Path != []:
         for p in Path:
             R.move_to(p[0],p[1])
+            R.update_position(p[0],p[1])
     else:
         pass
     

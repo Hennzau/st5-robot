@@ -50,6 +50,10 @@ class Robot():
 
     def position(self):
         return (self.i, self.j)
+    
+    def update_position(self,i_,j_):
+        self.i = i_
+        self.j = j_
 
     def __str__(self):
         return f"Position : {self.position()}\nOrientation : {self.direction}"

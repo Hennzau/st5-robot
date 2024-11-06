@@ -65,6 +65,9 @@ Robot {
         anchor 0.05 0.06 0
       }
       device [
+        PositionSensor {
+          name "s1"
+        }
         RotationalMotor {
           name "wheel1"
         }
@@ -98,6 +101,9 @@ Robot {
         anchor 0.05 -0.06 0
       }
       device [
+        PositionSensor {
+          name "s2"
+        }
         RotationalMotor {
           name "wheel2"
         }
@@ -121,6 +127,9 @@ Robot {
         anchor -0.05 0.06 0
       }
       device [
+        PositionSensor {
+          name "s3"
+        }
         RotationalMotor {
           name "wheel3"
         }
@@ -144,6 +153,10 @@ Robot {
         anchor -0.05 -0.06 0
       }
       device [
+        PositionSensor {
+          name "s4"
+          resolution 1024
+        }
         RotationalMotor {
           name "wheel4"
         }
@@ -183,5 +196,5 @@ Robot {
     density -1
     mass 1
   }
-  controller "student2"
+  controller "student3"
 }

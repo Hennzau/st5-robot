@@ -41,7 +41,6 @@ class Node:
         # Complete here with your own variables
         # =======================
 
-        self.state = "STOP" # STOP, FRONT, 90_LEFT, 90_RIGHT, 180_LEFT
         self.current_intersections = None
         self.follow_line_state = "FRONT" # FRONT, LEFT, RIGHT
 
@@ -49,8 +48,9 @@ class Node:
         self.next_waypoint = None
 
         self.padding_encoder = None
+        self.turn_encoder = None
 
-        self.next_step = None
+        self.next_step = "STOP"
 
         self.robot = Robot()
 
@@ -93,6 +93,7 @@ class Node:
 
     def run(self):
         while True:
+            time.sleep(1/30)
             # =======================
             # Check if the node should stop
             # =======================
@@ -107,13 +108,15 @@ class Node:
             self.zenoh_mutex.acquire()
 
             if self.encoder is None:
+                self.zenoh_mutex.release()
                 continue
 
-            if self.next_waypoint is None:
-                continue
+            # if self.next_waypoint is None:
+            #     self.zenoh_mutex.release()
+            #     continue
 
-            if self.state == "STOP":
-                self.next_step = self.robot.move_to(self.next_waypoint.i, self.next_waypoint.j)
+            if self.next_step == "STOP":
+                self.next_step = self.robot.move_to(2, 2)
 
             self.do_next_step()
 
@@ -196,9 +199,8 @@ class Node:
             self.do_90_right()
         elif self.next_step == "180LEFT":
             self.do_180_left()
-
-        if self.next_step == "STOP":
-            self.state = "STOP"
+        elif self.next_step == "STOP":
+            self.motor_control.put(MotorControl.serialize(MotorControl(0, 0)))
 
     def do_front(self):
         # =======================
@@ -206,25 +208,94 @@ class Node:
         # You also check if you have reached the next intersection
         # =======================
 
-        self.motor_control.put(MotorControl.serialize(MotorControl(200, 200)))
+        if self.follow_line_state == "FRONT":
+            self.motor_control.put(MotorControl.serialize(MotorControl(200, 200)))
+        elif self.follow_line_state == "LEFT":
+            self.motor_control.put(MotorControl.serialize(MotorControl(255, 100)))
+        elif self.follow_line_state == "RIGHT":
+            self.motor_control.put(MotorControl.serialize(MotorControl(100, 255)))
 
         # If you see an intersection, register the current encoder value
         if self.current_intersections is not None and self.padding_encoder is None:
             self.padding_encoder = self.encoder
+            print("Intersection detected, starting padding...")
 
         if self.padding_encoder is not None:
-            if self.encoder[0] - self.padding_encoder[0] > 80 and self.encoder[1] - self.padding_encoder[1] > 80:
-                self.state = "STOP"
+            if self.encoder[0] - self.padding_encoder[0] > 120 and self.encoder[1] - self.padding_encoder[1] > 120:
+                self.next_step = "STOP"
                 self.padding_encoder = None
+                print("Padding done, stopping...")
+
+                self.robot.avance()
 
     def do_90_left(self):
-        pass
+        # =======================
+        # Each iteration of the loop, you send a new motor control command to turn left
+        # You also check if you have turned 90 degrees
+        # =======================
+
+        self.motor_control.put(MotorControl.serialize(MotorControl(255, -255)))
+
+        if self.turn_encoder is None:
+            self.turn_encoder = self.encoder
+
+        print(self.encoder[1] - self.turn_encoder[1])
+        print(self.encoder[0] - self.turn_encoder[0])
+
+        if (
+            self.encoder[1] - self.turn_encoder[1] < -189
+            and self.encoder[0] - self.turn_encoder[0] > 264
+        ):
+            self.next_step = "STOP"
+            self.turn_encoder = None
+
+            self.robot.gauche()
 
     def do_90_right(self):
-        pass
+        # =======================
+        # Each iteration of the loop, you send a new motor control command to turn right
+        # You also check if you have turned 90 degrees
+        # =======================
+
+        self.motor_control.put(MotorControl.serialize(MotorControl(-255, 255)))
+
+        if self.turn_encoder is None:
+            self.turn_encoder = self.encoder
+
+        if (
+            self.encoder[1] - self.turn_encoder[1] < -189
+            and self.encoder[0] - self.turn_encoder[0] > 264
+        ):
+        # sim
+        # if (
+        #     self.encoder[0] - self.turn_encoder[0] < -255 / 2.5 and
+        #     self.encoder[1] - self.turn_encoder[1] > 264 / 2.5
+        # ):
+            self.next_step = "STOP"
+            self.turn_encoder = None
+
+            self.robot.droite()
 
     def do_180_left(self):
-        pass
+        # =======================
+        # Each iteration of the loop, you send a new motor control command to turn right
+        # You also check if you have turned 90 degrees
+        # =======================
+
+        self.motor_control.put(MotorControl.serialize(MotorControl(255, -255)))
+
+        if self.turn_encoder is None:
+            self.turn_encoder = self.encoder
+
+        if (
+            self.encoder[1] - self.turn_encoder[1] < -189 * 2
+            and self.encoder[0] - self.turn_encoder[0] > 264 * 2
+        ):
+            self.next_step = "STOP"
+            self.turn_encoder = None
+
+            self.robot.gauche()
+            self.robot.gauche()
 
     def close(self):
         # =======================

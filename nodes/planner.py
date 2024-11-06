@@ -116,7 +116,7 @@ class Node:
             #     continue
 
             if self.next_step == "STOP":
-                self.next_step = self.robot.move_to(2, 2)
+                self.next_step = "FRONT" #self.robot.move_to(2, 2)
 
             self.do_next_step()
 

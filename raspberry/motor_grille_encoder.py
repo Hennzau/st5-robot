@@ -246,6 +246,7 @@ class Node:
 
     def update_state(self, data):
         self.intersections = self.get_avaiable_intersections(data)
+        print(self.intersections)
 
         if self.intersections is None:
             self.update_line_following_state(data)

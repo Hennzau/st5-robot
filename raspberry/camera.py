@@ -155,6 +155,8 @@ class Node:
                 )
 
                 image_data.distance_to_middle = distance
+            else:
+                image_data.distance_to_middle = 9000
 
             color_frame = cv2.imencode(
                 ".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70]

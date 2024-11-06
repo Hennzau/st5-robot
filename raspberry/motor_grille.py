@@ -96,6 +96,8 @@ class Node:
                 rep = self.arduino.readline()
             print(rep.decode())
 
+        print("dzadzadazd")
+
         # state will be either "FRONT","LEFT","RIGHT", "90RIGHT", "90LEFT", "STOP"
         self.state = "FRONT"
         self.timer = None

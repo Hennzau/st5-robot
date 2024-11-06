@@ -276,6 +276,7 @@ class Node:
 
                 print("Padding ended : ready for manoeuver")
                 self.state = random.choice(self.intersections if self.intersections is not None else ["STOP"])
+                print("Décision : ", self.state)
                 self.update_catch_line(data)
 
         if self.padding_timer is None and self.state not in ["90RIGHT", "90LEFT"]:

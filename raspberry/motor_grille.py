@@ -251,14 +251,14 @@ class Node:
         data = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
         if self.timer is not None:
-            if time.time() - self.timer > 0.75:
+            if time.time() - self.timer > 0.50:
                 self.timer = None
-                self.state = "STOP"
+                self.state = "FRONT"
                 self.grace_timer = time.time()
                 print("Manoeuver ended : grace period started")
 
         if self.grace_timer is not None:
-            if time.time() - self.grace_timer > 3.0:
+            if time.time() - self.grace_timer > 0.5:
                 self.grace_timer = None
                 self.state = "FRONT"
                 print("Grace period ended")

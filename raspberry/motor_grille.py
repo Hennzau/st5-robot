@@ -260,10 +260,11 @@ class Node:
         if self.grace_timer is not None:
             if time.time() - self.grace_timer > 3.0:
                 self.grace_timer = None
+                self.state = "FRONT"
                 print("Grace period ended")
 
         if self.padding_timer is not None:
-            if time.time() - self.padding_timer > 0.5:
+            if time.time() - self.padding_timer > 0.1:
                 self.timer = time.time()
                 self.padding_timer = None
 

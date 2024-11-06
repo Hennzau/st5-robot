@@ -321,6 +321,8 @@ class Node:
             elif self.grace_timer is not None:
                 self.update_line_following_state(data)
 
+        print (self.state, self.manoeuvre_enc, self.padding_enc, self.grace_timer)
+
         self.move()
 
     def ctrl_c_signal(self, signum, frame):

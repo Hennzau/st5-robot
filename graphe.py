@@ -1,3 +1,6 @@
+from traj_calculate.Astar import *
+### Cas des obstacle prédéfinis, grâce à A* algo ###
+
 class Grille():
     def __init__(self, l=5, c=5):
         sommets = []
@@ -162,22 +165,56 @@ class Robot():
             else:
                 virage = ""
 
-            if self.detect_obstacle():
-                print("Oh mince, un obstacle !")
-                if virage == "D":
-                    self.gauche()
-                elif virage == "G":
-                    self.droite()
-                self.grille.delete_arete(s, t)
-                print("Je recalcule mon itinéraire ...")
-                itineraire = self.itineraire(ifin, jfin)
-                print("C'est bon, on est reparti")
-                print(f"Voici mon nouvel itinéraire :\n{itineraire}")
-                s = itineraire.pop(0)
-                continue
+            # if self.detect_obstacle():
+            #     print("Oh mince, un obstacle !")
+            #     if virage == "D":
+            #         self.gauche()
+            #     elif virage == "G":
+            #         self.droite()
+            #     self.grille.delete_arete(s, t)
+            #     print("Je recalcule mon itinéraire ...")
+            #     itineraire = self.itineraire(ifin, jfin)
+            #     print("C'est bon, on est reparti")
+            #     print(f"Voici mon nouvel itinéraire :\n{itineraire}")
+            #     s = itineraire.pop(0)
+            #     continue
 
             self.avance()
             print("Vroum ! J'avance !")
             s = t
             print(f"Je suis au point {s}, et orienté à {self.direction}°")
         print("Je suis arrivé")
+
+if __name__ == '__main__':
+    # R = Robot()
+    # R.move_to(2,2)
+    
+    # Define the grid (1 for unblocked, 0 for blocked)
+    grid = [
+        [1, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1],
+        [1, 1, 1, 0, 1],
+        [0, 0, 1, 1, 1],
+        [1, 1, 1, 0, 1],
+       ]
+    
+    # Define the start and destination
+    start = [1, 1]
+    dest = [5, 5]
+    
+    R = Robot(start[0], start[1])
+    
+    Path, dist = a_star_search(grid, start, dest)
+    
+    if Path != []:
+        for p in Path:
+            R.move_to(p[0],p[1])
+    else:
+        pass
+        
+
+    
+   
+    
+    
+    

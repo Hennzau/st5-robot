@@ -58,14 +58,14 @@ def trace_path(cell_details, dest):
 
     # Trace the path from destination to source using parent cells
     while not (cell_details[row][col].parent_i == row and cell_details[row][col].parent_j == col):
-        path.append((row, col))
+        path.append((row+1, col+1))
         temp_row = cell_details[row][col].parent_i
         temp_col = cell_details[row][col].parent_j
         row = temp_row
         col = temp_col
 
     # Add the source cell to the path
-    path.append((row, col))
+    path.append((row+1, col+1))
     # Reverse the path to get the path from source to destination
     path.reverse()
     # Print the path
@@ -79,20 +79,24 @@ def trace_path(cell_details, dest):
 
 # Implement the A* search algorithm
 def a_star_search(grid, src, dest):
+    src[0] = src[0] - 1
+    src[1] = src[1] - 1
+    dest[0] = dest[0] - 1
+    dest[1] = dest[1] - 1
     # Check if the source and destination are valid
     if not is_valid(src[0], src[1]) or not is_valid(dest[0], dest[1]):
         print("Source or destination is invalid")
-        return
+        return [], 10000
 
     # Check if the source and destination are unblocked
     if not is_unblocked(grid, src[0], src[1]) or not is_unblocked(grid, dest[0], dest[1]):
         print("Source or the destination is blocked")
-        return
+        return [], 10000
 
     # Check if we are already at the destination
     if is_destination(src[0], src[1], dest):
         print("We are already at the destination")
-        return
+        return 
 
     # Initialize the closed list (visited cells)
     closed_list = [[False for _ in range(COL)] for _ in range(ROW)]
@@ -164,7 +168,7 @@ def a_star_search(grid, src, dest):
     # If the destination is not found after visiting all cells
     if not found_dest:
         print("Failed to find the destination cell")
-
+        
 # Driver Code
 
 
@@ -187,5 +191,5 @@ def main():
     path, dist = a_star_search(grid, start, dest)
 
 
-if __name__ == "__main__":
-    main()
+
+    

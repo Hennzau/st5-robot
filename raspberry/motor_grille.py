@@ -91,7 +91,9 @@ class Node:
             print("Connection ok")
 
             self.arduino.write(b"I0")
-            AttAcquit(self.arduino)
+            rep = b""
+            while rep == b"":  # attend l'acquitement du B2
+                rep = self.arduino.readline()
             print(rep.decode())
 
         # state will be either "FRONT","LEFT","RIGHT", "90RIGHT", "90LEFT", "STOP"

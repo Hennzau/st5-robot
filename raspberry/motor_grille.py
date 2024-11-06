@@ -96,8 +96,6 @@ class Node:
                 rep = self.arduino.readline()
             print(rep.decode())
 
-        print("dzadzadazd")
-
         # state will be either "FRONT","LEFT","RIGHT", "90RIGHT", "90LEFT", "STOP"
         self.state = "FRONT"
         self.timer = None
@@ -205,7 +203,7 @@ class Node:
                     if intersections is not None:
                         intersections.append("FRONT")
 
-        print (intersections, data.max_white, data.pos_intersection, data.left_histogram, data.right_histogram, data.top_histogram)
+        # print (intersections, data.max_white, data.pos_intersection, data.left_histogram, data.right_histogram, data.top_histogram)
 
         return intersections
 
@@ -252,8 +250,6 @@ class Node:
     def processed_image_data_callback(self, sample):
         data = ProcessedImageData.deserialize(sample.payload.to_bytes())
 
-        print("ohahzda")
-
         if self.timer is not None:
             if time.time() - self.timer > 3.0:
                 self.timer = None
@@ -267,7 +263,7 @@ class Node:
                 print("Grace period ended")
 
         if self.padding_timer is not None:
-            if time.time() - self.padding_timer > 3.0:
+            if time.time() - self.padding_timer > 0.0:
                 self.timer = time.time()
                 self.padding_timer = None
 

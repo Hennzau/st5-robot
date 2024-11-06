@@ -60,6 +60,17 @@ def envoiCmdi(arduino, cmd, arg1, arg2, arg3, arg4):
     while rep == b"":  # attend l'acquitement du B2
         rep = arduino.readline()
 
+def resetENC(arduino):
+    envoiCmdi(arduino, b"B", 0, 0, 0, 0)
+
+def recupCmdl(arduino, cmd):
+    arduino.write(cmd)
+    val1 = read_i32(arduino)
+    val2 = read_i32(arduino)
+
+    return val1, val2
+
+
 def carAdvance(arduino, v1, v2):
     envoiCmdi(arduino, b"C", v1, v2, 0, 0)
 
@@ -249,8 +260,12 @@ class Node:
             carAdvance(self.arduino, 100, 255)
         elif self.state == "90LEFT":
             carAdvance(self.arduino, 255, -255)
+            enc1, enc2 = recupCmdl(self.arduino, b"N")
+            print(enc1, enc2)
         elif self.state == "90RIGHT":
             carAdvance(self.arduino, -255, 255)
+            enc1, enc2 = recupCmdl(self.arduino, b"N")
+            print(enc1, enc2)
         elif self.state == "STOP":
             carAdvance(self.arduino, 0, 0)
 
@@ -282,7 +297,7 @@ class Node:
                 print("Padding ended : ready for manoeuver")
 
                 itin = self.robot.move_to(5,4)
-                self.state = random.choice(["90RIGHT", "90LEFT", "FRONT"])
+                self.state = itin
 
                 if self.state != "STOP":
                     self.timer = time.time()

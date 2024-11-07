@@ -26,7 +26,7 @@ Les données du robot peuvent ainsi être traitées dans ce fichier. Nous pouvon
 
 ### Mise en place de la simulation
 
-Les fichiers spécifiques à la simulation sont dans le dossier ```sim```.
+Les fichiers spécifiques à la simulation sont dans le dossier ```simulation```.
 
 #### Simulation basique
 
@@ -35,7 +35,7 @@ Ce dernier d'occupe du traitement d'image et de donner les ordres au robot.
 
 Pour tester cette simulation, il faut :
 
-- Ouvrir le monde ```sim/worlds/huit.wbt``` (ouvrir ```grille.wbt``` pour tester sur la grille)
+- Ouvrir le monde ```simulation/worlds/huit.wbt``` (ouvrir ```grille.wbt``` pour tester sur la grille)
 - Modifier le controller du robot pour ```basique.py```
 - Démarrer la simulation avec le bouton play
 
@@ -45,11 +45,11 @@ Dans *Webots*, le robot bouge et le retour vidéo s'affiche dans une fenêtre Py
 
 L'avantage de cette simulation et qu'elle réplique exactement le comportement du robot.
 
-Démarrez la simulation en ouvrant le monde *Webots* ```sim/worlds/grille.wbt```. Il faut s'assurer que le temps s'écoule bien. Le robot attend donc les ordres, mais ne bouge pas.
+Démarrez la simulation en ouvrant le monde *Webots* ```simulation/worlds/grille.wbt```. Il faut s'assurer que le temps s'écoule bien. Le robot attend donc les ordres, mais ne bouge pas.
 
 Puis exécutez les commandes suivantes à partir de la racine de ```st5-robot``` dans deux terminaux séparés.
 
 ```shell
-python .\host\monitoring.py
+python .\nodes\dev-monitoring.py
 python .\nodes\planner.py
 ```

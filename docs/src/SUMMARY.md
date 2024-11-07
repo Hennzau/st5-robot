@@ -1,4 +1,4 @@
 # Summary
 
-- [Chapter 1](./chapter_1.md)
+- [HappyWheels](./happy_wheels.md)
 - [Simulation Webots](./webots.md)

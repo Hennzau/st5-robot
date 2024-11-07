@@ -20,7 +20,7 @@ import numpy as np
 # Import the message class
 # =======================
 
-from message import ProcessedData, IRData, EncoderData, MotorControl, NextWaypoint
+from message import ProcessedData, IRData, EncoderData, MotorControl, NextWaypoint, Urgency
 
 from graph import Robot
 
@@ -97,6 +97,8 @@ class Node:
         )
 
         self.motor_control = self.session.declare_publisher("happywheels/motor_control")
+
+        self.urgency_subscriber = self.session.declare_subscriber("happywheels/urgency", self.urgency_callback)
 
     def run(self):
         while True:
@@ -253,6 +255,9 @@ class Node:
         self.next_waypoint = wait_point
         self.zenoh_mutex.release()
 
+    def urgency_callback(self, sample):
+        self.next_step = "STOP-ALL"
+
     def do_next_step(self):
         if self.next_step == "FRONT":
             self.do_front()
@@ -402,6 +407,7 @@ class Node:
         self.encoder_data.undeclare()
         self.wait_point.undeclare()
         self.motor_control.undeclare()
+        self.urgency_subscriber.undeclare()
 
         # =======================
         # Close zenoh session

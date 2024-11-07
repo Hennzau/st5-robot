@@ -24,7 +24,7 @@ import struct
 # Import the message class
 # =======================
 
-from message import MotorControl, IRData, EncoderData
+from message import MotorControl, IRData, EncoderData, Urgency
 
 
 def read_i16(f):
@@ -94,6 +94,8 @@ class Node:
         self.mutex = threading.Lock()
         self.serial_mutex = threading.Lock()
 
+        self.ir_faulty = 0
+
         # =======================
         # Complete here with your own variables
         # =======================
@@ -141,6 +143,7 @@ class Node:
         self.motor_control_subscriber = self.session.declare_subscriber(
             "happywheels/motor_control", self.motor_control_callback
         )
+        self.urgency_publisher = self.session.declare_publisher("happywheels/urgency")
 
     def run(self):
         while True:
@@ -173,7 +176,15 @@ class Node:
 
             volts = ir * 5 / 1024
 
+            if volts == 0:
+                self.ir_faulty += 1
+
+            if self.ir_faulty > 100:
+                self.ir_faulty = 0
+                self.urgency_publisher.put(Urgency.serialize(Urgency(0)))
+
             if volts != 0:
+                self.ir_faulty = 0
                 distcm = 0.0
                 if volts < 1:
                     distcm = 28.0 / volts
@@ -205,6 +216,7 @@ class Node:
         self.motor_control_subscriber.undeclare()
         self.ir_publisher.undeclare()
         self.encoder_publisher.undeclare()
+        self.urgency_publisher.undeclare()
 
         # =======================
         # Close zenoh session

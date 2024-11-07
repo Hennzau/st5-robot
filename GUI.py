@@ -20,44 +20,47 @@ class MainWindow(QMainWindow):
         # Label for table destination
         self.input = QLabel("Table de destination : ")
         self.input.setFont(QFont("Arial", 10))
+        self.input.setStyleSheet("QLabel { color : #000000; }")
         self.table = "À sélectionner"
         self.t_id = (1,1)
         self.text = QLabel(self.table)
         self.text.setFont(QFont("Arial", 10))
+        self.text.setStyleSheet("QLabel { color : #000000; }")
 
         # Adding logo
         self.logo = QLabel(self)
         img = QPixmap('logo_happy_wheels.png')
-        # img = img.scaled(80, 80, QtCore.Qt.AspectRatioMode.IgnoreAspectRatio)
+        img = img.scaled(80, 80, QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         self.logo.setPixmap(img)
         
         choice_layout.addWidget(self.input)
         choice_layout.addWidget(self.text)
         choice_layout.addWidget(self.logo)
-        choice_layout.setContentsMargins(0, 0, 0, 0)
+        choice_layout.setContentsMargins(1, 1, 1, 1)
 
         # Discard and Confirm buttons
         self.discard = QPushButton("Annuler")
         self.discard.pressed.connect(self.exit)
         validate_layout.addWidget(self.discard)
-        self.discard.setStyleSheet("background-color : #fc6a6a;")
+        self.discard.setStyleSheet("background-color : #fc6a6a; color : #000000;")
 
         self.confirm = QPushButton("Valider")
         self.confirm.pressed.connect(self.close)
         validate_layout.addWidget(self.confirm)
-        self.confirm.setStyleSheet("background-color : #85de8f;")
+        self.confirm.setStyleSheet("background-color : #85de8f; color : #000000;")
 
         # Return button
         self.finished = QPushButton("Plat récupéré")
         self.finished.pressed.connect(partial(self.done))
         return_layout.addWidget(self.finished)
-        self.finished.setStyleSheet("background-color : #35868c;")
+        self.finished.setStyleSheet("background-color : #ffb2a0; color : #000000;")
 
         # Add table buttons
         for i in range(4):
             for j in range(4):
                 btn = QPushButton(str(4 * i + j + 1))
                 btn.pressed.connect(partial(self.select_table, i, j))
+                btn.setStyleSheet("background-color : #C5dfe0; color : #000000;")
                 button_layout.addWidget(btn, i, j)
 
         # Add layouts to main layout
@@ -70,9 +73,10 @@ class MainWindow(QMainWindow):
         pagelayout.addItem(QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         pagelayout.addLayout(return_layout)
 
-        # Set the central widget
+        # Set background color for the central widget
         widget = QWidget()
         widget.setLayout(pagelayout)
+        widget.setStyleSheet("background-color : #35868c;")
         self.setCentralWidget(widget)
 
     def select_table(self, i, j):
@@ -93,7 +97,7 @@ class MainWindow(QMainWindow):
 def user_input():
     app = QApplication(sys.argv)
     window = MainWindow()
-    window.resize(350, 350)
+    window.resize(400, 400)
     window.show()
     app.exec()
     return (window.t_id)

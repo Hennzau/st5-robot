@@ -141,7 +141,7 @@ def ScanAndUpdate(node, last):
     flag = True
     for s in s_list:
         
-        #if DetectObstacle(s[0],s[1]) -> 1. detected 0. not detected
+        #if DetectObstacle(s[0],s[1]) -> 1.0 detected (in case detect an obstacle or detect the edge)   0.0 (otherwise)
         if node.sensed_map[s[0], s[1]] != node.global_map[s[0], s[1]]:
             
             flag = False

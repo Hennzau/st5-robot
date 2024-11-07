@@ -1,6 +1,3 @@
-from traj_calculate.Astar import *
-### Cas des obstacle prédéfinis, grâce à A* algo ###
-
 class Grille():
     def __init__(self, l=5, c=5):
         sommets = []
@@ -32,15 +29,24 @@ class Grille():
         return t in self.arete(s)
 
     def obstacles(self):
-        return [((3, 1), (4, 1)), ((5, 2), (5, 3)), ((3, 3), (3, 4)), ((4,5),(5,5))]
+        return [((1, 2), (1, 3))]
 
     def delete_arete(self, s, t):
-        self.arete(s).remove(t)
-        self.arete(t).remove(s)
+        if self.exist_arete(s, t):
+            if t in self.aretes[s]:
+                self.aretes[s].remove(t)
+        if self.exist_arete(t, s):
+            if s in self.aretes[t]:
+                self.aretes[t].remove(s)
+
+    def add_arete(self, s, t):
+        if not self.exist_arete(s, t):
+            self.aretes[s].append(t)
+        if not self.exist_arete(t, s):
+            self.aretes[t].append(s)
 
 
 class Robot():
-
     def __init__(self, i=1, j=1, orientation=0):
         G = Grille(5, 5)
         self.grille = G
@@ -50,10 +56,6 @@ class Robot():
 
     def position(self):
         return (self.i, self.j)
-    
-    def update_position(self,i_,j_):
-        self.i = i_
-        self.j = j_
 
     def __str__(self):
         return f"Position : {self.position()}\nOrientation : {self.direction}"
@@ -94,7 +96,7 @@ class Robot():
         else:
             pass
 
-    def itineraire(self, ifin=1, jfin=1):
+    def itineraire(self, ifin=1, jfin=1, obstacles=[]):
         s = self.position()
         t = (ifin, jfin)
 
@@ -104,6 +106,14 @@ class Robot():
         parent = {s: None}
         # Liste pour stocker l'ordre de visite
         G = self.grille
+        for x, y in obstacles:
+            # if type(x) is tuple and type(y) is tuple:
+            G.delete_arete(x, y)
+            # if type(x) is int and type(y) is int:
+            #    G.sommets.remove((x, y))
+            #    G.aretes.pop((x, y))
+            #    for a in G.aretes.keys():
+            #        G.aretes[a].remove((x, y))
 
         # Tant qu'il y a des nœuds dans la file
         while file:
@@ -116,8 +126,9 @@ class Robot():
                     parent[voisin] = noeud
                     file.append(voisin)
 
-        while parent[itin[-1]] is not None:
-            itin.append(parent[itin[-1]])
+        if itin[-1] in parent:
+            while parent[itin[-1]] is not None:
+                itin.append(parent[itin[-1]])
 
         return list(reversed(itin))
 
@@ -131,44 +142,55 @@ class Robot():
         else:
             return False
 
-    def move_to(self, ifin=1, jfin=1):
+    def move_to(self, ifin=1, jfin=1, obstacles=[]):  # -> GAUCHE, RIGHT, AVANCE, RECULE
+        s = self.position()
+        # print(f"Je suis orienté à {self.direction}°")
 
-        itineraire = self.itineraire(ifin, jfin)
-        print(f"Voici mon itinéraire initial :\n{itineraire}")
+        # On code les arêtes où le robot n'a pas le droit d'aller
+        # i, j = s
+        # forbidden = [] + obstacles
+        # if self.direction == 0:
+        #    forbidden.append((s, (i, j-1)))
+        # elif self.direction == 90:
+        #    forbidden.append((s, (i+1, j)))
+        # elif self.direction == -90:
+        #    forbidden.append((s, (i-1, j)))
+        # elif self.direction == 180:
+        #    forbidden.append((s, (i, j+1)))
+
+        itineraire = self.itineraire(ifin, jfin, obstacles)
+
+        if len(itineraire) == 0:
+            return "STOP"
+
+        # print(f"Voici mon itinéraire initial :\n{itineraire}")
+
         s = itineraire.pop(0)
-        print(f"Je suis orienté à {self.direction}°")
-        virage = ""
-        while itineraire:
-            t = itineraire.pop(0)
-            print(f"Direction le point {t}")
 
-            if t[0]-s[0] == 1:
-                target = -90
-            elif t[1]-s[1] == 1:
-                target = 0
-            elif t[0]-s[0] == -1:
-                target = 90
-            elif t[1]-s[1] == -1:
-                target = 180
+        if len(itineraire) == 0:
+            return "STOP"
 
-            if self.direction-target == 90 or self.direction-target == -270:
-                self.droite()
-                virage = "D"
-                print("Je tourne à droite")
-            elif self.direction-target == -90 or self.direction-target == 270:
-                self.gauche()
-                virage = "G"
-                print("Je tourne à gauche")
-            elif abs(self.direction-target) == 180:
-                self.recule()
-                virage = ""
-                print("Attention, je recule")
-                s = t
-                print(f"Je suis au point {s}")
-                continue
-            else:
-                virage = ""
+        t = itineraire.pop(0)
 
+        target = 0
+
+        if t[0]-s[0] == 1:
+            target = -90
+        elif t[1]-s[1] == 1:
+            target = 0
+        elif t[0]-s[0] == -1:
+            target = 90
+        elif t[1]-s[1] == -1:
+            target = 180
+
+        if self.direction-target == 90 or self.direction-target == -270:
+            return "90RIGHT"
+        elif self.direction-target == -90 or self.direction-target == 270:
+            return "90LEFT"
+        elif abs(self.direction-target) == 180:
+            return "180LEFT"
+        else:
+            return "FRONT"
             # if self.detect_obstacle():
             #     print("Oh mince, un obstacle !")
             #     if virage == "D":
@@ -183,16 +205,7 @@ class Robot():
             #     s = itineraire.pop(0)
             #     continue
 
-            self.avance()
-            print("Vroum ! J'avance !")
-            s = t
-            print(f"Je suis au point {s}, et orienté à {self.direction}°")
-        print("Je suis arrivé")
-
-        
-
-    
-   
-    
-    
-    
+            #     self.avance()
+            #     print("Vroum ! J'avance !")
+            #     s = t
+            #     print(f"Je suis au point {s}, et orienté à 

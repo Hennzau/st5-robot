@@ -64,6 +64,8 @@ Ce robot est fait pour fonctionner avec python 3.9 sur la raspberry et sur votre
 - `dearpygui` (sur le Host seulement)
 - `pyqt6` (sur le Host seulement)
 
+**Note**: Le code qui doit être flashé sur l'arduino est dans le dossier `arduino/arduino.ino`.
+
 ## IPC / TCPIP
 
 Les différents noeuds ont été créés avec la bibliothèque `zenoh` qui permet de connecter des processus entre eux en utlisant des protocoles de communication

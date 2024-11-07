@@ -3,7 +3,7 @@
 HappyWheels est le nom de notre équipe pour ce projet au sein de la ST5 Véhicules Intelligents. Nous avons choisi ce nom car il est en lien avec le thème du projet,
 qui est la simulation de véhicules dans un scénario que nous avons défini comme étant de la livraison de plat dans un restaurant.
 
-<center><img src="logo_happy_wheels.png" alt="HappyWheels Logo"/></center>
+<center><img src="docs/src/logo_happy_wheels.png" alt="HappyWheels Logo"/></center>
 
 ## Membres de l'équipe
 
@@ -33,7 +33,7 @@ Entre la simulation et le robot réel, seulement deux noeuds changent. Le reste 
 
 Les autres noeuds peuvent ensuite être lancé en fonction de l'objectif de l'expérience.
 
-![Architecture](happywheels.drawio.png)
+![Architecture](docs/src/happywheels.drawio.png)
 
 ## Features
 

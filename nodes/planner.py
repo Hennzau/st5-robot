@@ -37,6 +37,8 @@ class Node:
         self.mutex = threading.Lock()
         self.zenoh_mutex = threading.Lock()
 
+        self.grace_timer = None
+
         # =======================
         # Complete here with your own variables
         # =======================
@@ -49,6 +51,10 @@ class Node:
 
         self.padding_encoder = None
         self.turn_encoder = None
+
+        self.obstacles = []
+
+        self.distance_trigger = 0
 
         self.next_step = "STOP"
 
@@ -116,11 +122,14 @@ class Node:
             #     continue
 
             if self.next_step == "STOP":
-                self.next_step = "FRONT" #self.robot.move_to(2, 2)
+                self.next_step = self.robot.move_to(3, 3, self.obstacles)
 
             self.do_next_step()
 
             self.zenoh_mutex.release()
+
+            if self.grace_timer is not None and time.time() - self.grace_timer > 0.5:
+                self.grace_timer = None
 
         # =======================
         # Close the node
@@ -129,7 +138,12 @@ class Node:
         self.close()
 
     def processed_image_data_callback(self, sample):
-        processed_data = ProcessedData.deserialize(sample.payload.to_bytes())
+        buffer = sample.payload.to_bytes()
+
+        if buffer is None:
+            return
+
+        processed_data = ProcessedData.deserialize(buffer)
 
         intersections = None
 
@@ -176,6 +190,48 @@ class Node:
     def ir_callback(self, sample):
         ir_data = IRData.deserialize(sample.payload.to_bytes())
 
+        if ir_data.distance < 30:
+            self.zenoh_mutex.acquire()
+
+            self.distance_trigger += 1
+
+            if self.distance_trigger < 5:
+                self.zenoh_mutex.release()
+                return
+
+            if self.turn_encoder is not None or self.next_step == "180LEFT":
+                self.zenoh_mutex.release()
+                return
+
+            print("Obstacle detected")
+            self.next_step = "180LEFT"
+
+            if self.robot.direction == 0:
+                self.obstacles.append(
+                    ((self.robot.i, self.robot.j), (self.robot.i, self.robot.j + 1))
+                )
+            if self.robot.direction == 90:
+                self.obstacles.append(
+                    ((self.robot.i, self.robot.j), (self.robot.i - 1, self.robot.j))
+                )
+            if self.robot.direction == 180:
+                self.obstacles.append(
+                    ((self.robot.i, self.robot.j), (self.robot.i, self.robot.j - 1))
+                )
+            if self.robot.direction == -90:
+                self.obstacles.append(
+                    ((self.robot.i, self.robot.j), (self.robot.i + 1, self.robot.j))
+                )
+
+            self.robot.avance()
+            print(self.robot.i, self.robot.j)
+
+            self.zenoh_mutex.release()
+        else:
+            self.zenoh_mutex.acquire()
+            self.distance_trigger = 0
+            self.zenoh_mutex.release()
+
     def encoder_callback(self, sample):
         encoder_data = EncoderData.deserialize(sample.payload.to_bytes())
 
@@ -217,8 +273,10 @@ class Node:
 
         # If you see an intersection, register the current encoder value
         if self.current_intersections is not None and self.padding_encoder is None:
-            self.padding_encoder = self.encoder
-            print("Intersection detected, starting padding...")
+            if self.grace_timer is None:
+                self.padding_encoder = self.encoder
+                print("Intersection detected, starting padding...")
+                self.grace_timer = time.time()
 
         if self.padding_encoder is not None:
             if self.encoder[0] - self.padding_encoder[0] > 120 and self.encoder[1] - self.padding_encoder[1] > 120:
@@ -226,7 +284,9 @@ class Node:
                 self.padding_encoder = None
                 print("Padding done, stopping...")
 
+                print(self.robot.i, self.robot.j, self.robot.direction)
                 self.robot.avance()
+                print(self.robot.i, self.robot.j)
 
     def do_90_left(self):
         # =======================
@@ -239,17 +299,15 @@ class Node:
         if self.turn_encoder is None:
             self.turn_encoder = self.encoder
 
-        print(self.encoder[1] - self.turn_encoder[1])
-        print(self.encoder[0] - self.turn_encoder[0])
-
         if (
-            self.encoder[1] - self.turn_encoder[1] < -189
-            and self.encoder[0] - self.turn_encoder[0] > 264
+            self.encoder[0] - self.turn_encoder[0] < -189
+            and self.encoder[1] - self.turn_encoder[1] > 264
         ):
             self.next_step = "STOP"
             self.turn_encoder = None
 
             self.robot.gauche()
+            self.grace_timer = time.time()
 
     def do_90_right(self):
         # =======================
@@ -275,6 +333,7 @@ class Node:
             self.turn_encoder = None
 
             self.robot.droite()
+            self.grace_timer = time.time()
 
     def do_180_left(self):
         # =======================
@@ -287,15 +346,21 @@ class Node:
         if self.turn_encoder is None:
             self.turn_encoder = self.encoder
 
+        print(self.encoder[0] - self.turn_encoder[0])
+        print(self.encoder[1] - self.turn_encoder[1])
+
         if (
-            self.encoder[1] - self.turn_encoder[1] < -189 * 2
-            and self.encoder[0] - self.turn_encoder[0] > 264 * 2
+            self.encoder[0] - self.turn_encoder[0] < -189 * 2.2
+            and self.encoder[1] - self.turn_encoder[1] > 264 * 2.2
         ):
-            self.next_step = "STOP"
+            self.next_step = "FRONT"
             self.turn_encoder = None
 
             self.robot.gauche()
             self.robot.gauche()
+            print(self.robot.i, self.robot.j, self.robot.direction)
+
+            self.grace_timer = time.time()
 
     def close(self):
         # =======================
@@ -307,6 +372,8 @@ class Node:
         # =======================
         # Complete here with your own cleanup code
         # =======================
+
+        self.motor_control.put(MotorControl.serialize(MotorControl(0, 0)))
 
         self.processed_data.undeclare()
         self.ir_data.undeclare()

@@ -168,18 +168,19 @@ class Node:
 
             volts = ir * 5 / 1024
 
-            distcm=0.0
-            if volts<1 :
-                distcm=28.0/volts
-            else :
-                volts=volts-0.28
-                distcm=20.2/volts
+            if volts != 0:
+                distcm=0.0
+                if volts<1 :
+                    distcm=28.0/volts
+                else :
+                    volts=volts-0.28
+                    distcm=20.2/volts
 
-            ir = IRData(
-                distance=distcm
-            )
+                ir = IRData(
+                    distance=distcm
+                )
 
-            self.ir_publisher.put(IRData.serialize(ir))
+                self.ir_publisher.put(IRData.serialize(ir))
 
         # =======================
         # Close the node

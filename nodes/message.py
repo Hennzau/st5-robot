@@ -14,6 +14,7 @@ class CompressedImage(IdlStruct):
     width: uint32
     height: uint32
 
+
 @dataclass
 class ProcessedData(IdlStruct):
     distance_to_middle: float32
@@ -23,19 +24,23 @@ class ProcessedData(IdlStruct):
     right_histogram: float32
     top_histogram: float32
 
+
 @dataclass
 class MotorControl(IdlStruct):
     speed_left: int32
     speed_right: int32
 
+
 @dataclass
 class IRData(IdlStruct):
     distance: float32
+
 
 @dataclass
 class EncoderData(IdlStruct):
     left: int32
     right: int32
+
 
 @dataclass
 class NextWaypoint(IdlStruct):

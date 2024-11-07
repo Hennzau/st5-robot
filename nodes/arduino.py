@@ -26,6 +26,7 @@ import struct
 
 from message import MotorControl, IRData, EncoderData
 
+
 def read_i16(f):
     return struct.unpack("<h", bytearray(f.read(2)))[0]
 
@@ -65,18 +66,20 @@ def recupCmdl(arduino, cmd):
 
     return val1, val2
 
+
 def recupCmdi(arduino, cmd):
     arduino.write(cmd)
-    val1=read_i16(arduino)
-    val2=read_i16(arduino)
-    val3=read_i16(arduino)
-    val4=read_i16(arduino)
+    val1 = read_i16(arduino)
+    val2 = read_i16(arduino)
+    val3 = read_i16(arduino)
+    val4 = read_i16(arduino)
 
-    return val1,val2,val3,val4
+    return val1, val2, val3, val4
 
 
 def carAdvance(arduino, v1, v2):
     envoiCmdi(arduino, b"C", v1, v2, 0, 0)
+
 
 class Node:
     def __init__(self):
@@ -135,7 +138,9 @@ class Node:
 
         self.ir_publisher = self.session.declare_publisher("happywheels/ir")
         self.encoder_publisher = self.session.declare_publisher("happywheels/encoder")
-        self.motor_control_subscriber = self.session.declare_subscriber("happywheels/motor_control", self.motor_control_callback)
+        self.motor_control_subscriber = self.session.declare_subscriber(
+            "happywheels/motor_control", self.motor_control_callback
+        )
 
     def run(self):
         while True:
@@ -156,7 +161,7 @@ class Node:
 
             self.serial_mutex.acquire()
             v1, v2 = recupCmdl(self.arduino, b"N")
-            tim,tim2,ir,dum1 = recupCmdi(self.arduino, b'R')
+            tim, tim2, ir, dum1 = recupCmdi(self.arduino, b"R")
             self.serial_mutex.release()
 
             encoder = EncoderData(
@@ -169,16 +174,14 @@ class Node:
             volts = ir * 5 / 1024
 
             if volts != 0:
-                distcm=0.0
-                if volts<1 :
-                    distcm=28.0/volts
-                else :
-                    volts=volts-0.28
-                    distcm=20.2/volts
+                distcm = 0.0
+                if volts < 1:
+                    distcm = 28.0 / volts
+                else:
+                    volts = volts - 0.28
+                    distcm = 20.2 / volts
 
-                ir = IRData(
-                    distance=distcm
-                )
+                ir = IRData(distance=distcm)
 
                 self.ir_publisher.put(IRData.serialize(ir))
 

@@ -1,14 +1,18 @@
-class Grille():
+class Grille:
     def __init__(self, l=5, c=5):
         sommets = []
-        for i in range(1, l+1):
-            for j in range(1, c+1):
+        for i in range(1, l + 1):
+            for j in range(1, c + 1):
                 sommets.append((i, j))
 
         aretes = {}
         for s in sommets:
-            aretes[s] = [t for t in sommets if (s[0] == t[0] and abs(
-                s[1]-t[1]) == 1) or (s[1] == t[1] and abs(s[0]-t[0]) == 1)]
+            aretes[s] = [
+                t
+                for t in sommets
+                if (s[0] == t[0] and abs(s[1] - t[1]) == 1)
+                or (s[1] == t[1] and abs(s[0] - t[0]) == 1)
+            ]
 
         self.lignes = l
         self.colonnes = c
@@ -46,7 +50,7 @@ class Grille():
             self.aretes[t].append(s)
 
 
-class Robot():
+class Robot:
     def __init__(self, i=1, j=1, orientation=0):
         G = Grille(5, 5)
         self.grille = G
@@ -137,7 +141,12 @@ class Robot():
         direction = self.direction
         G = self.grille
 
-        if (direction == 0 and (self.position(), (i, j+1)) in G.obstacles()) or (direction == 90 and (self.position(), (i-1, j)) in G.obstacles()) or (direction == -90 and (self.position(), (i+1, j)) in G.obstacles()) or (direction == 180 and (self.position(), (i, j-1)) in G.obstacles()):
+        if (
+            (direction == 0 and (self.position(), (i, j + 1)) in G.obstacles())
+            or (direction == 90 and (self.position(), (i - 1, j)) in G.obstacles())
+            or (direction == -90 and (self.position(), (i + 1, j)) in G.obstacles())
+            or (direction == 180 and (self.position(), (i, j - 1)) in G.obstacles())
+        ):
             return True
         else:
             return False
@@ -174,20 +183,20 @@ class Robot():
 
         target = 0
 
-        if t[0]-s[0] == 1:
+        if t[0] - s[0] == 1:
             target = -90
-        elif t[1]-s[1] == 1:
+        elif t[1] - s[1] == 1:
             target = 0
-        elif t[0]-s[0] == -1:
+        elif t[0] - s[0] == -1:
             target = 90
-        elif t[1]-s[1] == -1:
+        elif t[1] - s[1] == -1:
             target = 180
 
-        if self.direction-target == 90 or self.direction-target == -270:
+        if self.direction - target == 90 or self.direction - target == -270:
             return "90RIGHT"
-        elif self.direction-target == -90 or self.direction-target == 270:
+        elif self.direction - target == -90 or self.direction - target == 270:
             return "90LEFT"
-        elif abs(self.direction-target) == 180:
+        elif abs(self.direction - target) == 180:
             return "180LEFT"
         else:
             return "FRONT"

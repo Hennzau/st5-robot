@@ -1,11 +1,23 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSpacerItem, QSizePolicy
+from PyQt6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QWidget,
+    QGridLayout,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QLabel,
+    QSpacerItem,
+    QSizePolicy,
+)
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6 import QtCore
 from functools import partial
 import zenoh
 
 from message import NextWaypoint
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -22,7 +34,7 @@ class MainWindow(QMainWindow):
         self.input = QLabel("Table de destination : ")
         self.input.setFont(QFont("Arial", 10))
         self.table = "À sélectionner"
-        self.t_id = (1,1)
+        self.t_id = (1, 1)
         self.text = QLabel(self.table)
         self.text.setFont(QFont("Arial", 10))
 
@@ -33,7 +45,7 @@ class MainWindow(QMainWindow):
 
         # Adding logo
         self.logo = QLabel(self)
-        img = QPixmap('src/logo_happy_wheels.png')
+        img = QPixmap("src/logo_happy_wheels.png")
         # img = img.scaled(80, 80, QtCore.Qt.AspectRatioMode.IgnoreAspectRatio)
         self.logo.setPixmap(img)
 
@@ -63,11 +75,19 @@ class MainWindow(QMainWindow):
                 button_layout.addWidget(btn, i, j)
 
         # Add layouts to main layout
-        pagelayout.addItem(QSpacerItem(5, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        pagelayout.addItem(
+            QSpacerItem(5, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        )
         pagelayout.addLayout(choice_layout)
-        pagelayout.addItem(QSpacerItem(5, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        pagelayout.addItem(
+            QSpacerItem(5, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        )
         pagelayout.addLayout(button_layout)
-        pagelayout.addItem(QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        pagelayout.addItem(
+            QSpacerItem(
+                10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+            )
+        )
         pagelayout.addLayout(validate_layout)
 
         # Set the central widget
@@ -78,12 +98,14 @@ class MainWindow(QMainWindow):
     def select_table(self, i, j):
         """Updates the selected table label."""
         self.table = str(5 * i + j + 1)
-        self.t_id = (i + 1,j + 1)
+        self.t_id = (i + 1, j + 1)
         self.text.setText(self.table)
 
     def send_table(self):
         """Sends the table to the kitchen."""
-        self.pub_table.put(TableToDrive.serialize(TableToDrive(i=self.t_id[0], j=self.t_id[1])))
+        self.pub_table.put(
+            TableToDrive.serialize(TableToDrive(i=self.t_id[0], j=self.t_id[1]))
+        )
         print("Table envoyée")
 
     def exit(self):

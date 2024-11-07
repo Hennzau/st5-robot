@@ -24,6 +24,7 @@ from message import ProcessedData, IRData, EncoderData, MotorControl, NextWaypoi
 
 from graph import Robot
 
+
 class Node:
     def __init__(self):
         # =======================
@@ -44,7 +45,7 @@ class Node:
         # =======================
 
         self.current_intersections = None
-        self.follow_line_state = "FRONT" # FRONT, LEFT, RIGHT
+        self.follow_line_state = "FRONT"  # FRONT, LEFT, RIGHT
 
         self.encoder = [0, 0]
         self.next_waypoint = None
@@ -99,7 +100,7 @@ class Node:
 
     def run(self):
         while True:
-            time.sleep(1/30)
+            time.sleep(1 / 30)
             # =======================
             # Check if the node should stop
             # =======================
@@ -184,9 +185,11 @@ class Node:
         elif self.follow_line_state == "LEFT":
             if 8000 > processed_data.distance_to_middle > -tube_x:
                 self.follow_line_state = "FRONT"
-        elif self.follow_line_state == "FRONT" and processed_data.distance_to_middle > 8000:
-                self.next_step = "STOP-ALL"
-
+        elif (
+            self.follow_line_state == "FRONT"
+            and processed_data.distance_to_middle > 8000
+        ):
+            self.next_step = "STOP-ALL"
 
         self.zenoh_mutex.release()
 
@@ -282,7 +285,10 @@ class Node:
                 self.grace_timer = time.time()
 
         if self.padding_encoder is not None:
-            if self.encoder[0] - self.padding_encoder[0] > 120 and self.encoder[1] - self.padding_encoder[1] > 120:
+            if (
+                self.encoder[0] - self.padding_encoder[0] > 120
+                and self.encoder[1] - self.padding_encoder[1] > 120
+            ):
                 self.next_step = "STOP"
                 self.padding_encoder = None
                 print("Padding done, stopping...")
@@ -327,11 +333,11 @@ class Node:
             self.encoder[1] - self.turn_encoder[1] < -189
             and self.encoder[0] - self.turn_encoder[0] > 264
         ):
-        # sim
-        # if (
-        #     self.encoder[0] - self.turn_encoder[0] < -255 / 2.5 and
-        #     self.encoder[1] - self.turn_encoder[1] > 264 / 2.5
-        # ):
+            # sim
+            # if (
+            #     self.encoder[0] - self.turn_encoder[0] < -255 / 2.5 and
+            #     self.encoder[1] - self.turn_encoder[1] > 264 / 2.5
+            # ):
             self.next_step = "STOP"
             self.turn_encoder = None
 

@@ -184,6 +184,9 @@ class Node:
         elif self.follow_line_state == "LEFT":
             if 8000 > processed_data.distance_to_middle > -tube_x:
                 self.follow_line_state = "FRONT"
+        elif self.follow_line_state == "FRONT" and processed_data.distance_to_middle > 8000:
+                self.next_step = "STOP-ALL"
+
 
         self.zenoh_mutex.release()
 
@@ -255,7 +258,7 @@ class Node:
             self.do_90_right()
         elif self.next_step == "180LEFT":
             self.do_180_left()
-        elif self.next_step == "STOP":
+        elif self.next_step == "STOP" or self.next_step == "STOP-ALL":
             self.motor_control.put(MotorControl.serialize(MotorControl(0, 0)))
 
     def do_front(self):

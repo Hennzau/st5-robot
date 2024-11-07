@@ -5,7 +5,7 @@ from PyQt6 import QtCore
 from functools import partial
 import zenoh
 
-from message import TableToDrive
+from message import NextWaypoint
 
 class MainWindow(QMainWindow):
     def __init__(self):

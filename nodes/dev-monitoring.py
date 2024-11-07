@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import dearpygui.dearpygui as dpg
 
-from message import RGBCamera, Motor
+from message import CompressedImage
 
 
 class Monitoring:
@@ -22,8 +22,8 @@ class Monitoring:
 
         # Create node variables
 
-        self.width = 1280
-        self.height = 960
+        self.width = 640
+        self.height = 480
 
         dpg.create_context()
         dpg.create_viewport(title="MARCSRover", width=self.width, height=self.height)
@@ -37,32 +37,6 @@ class Monitoring:
         with dpg.window(label="camera", width=1280, height=480, pos=(0, 0)):
             dpg.add_image("camera_color", pos=(0, 0))
 
-        with dpg.window(label="Controller", width=640, height=480, pos=(640, 480)):
-            dpg.add_slider_float(
-                label="Speed",
-                tag="Speed",
-                width=150,
-                min_value=-4000,
-                max_value=4000,
-                default_value=0,
-            )
-            dpg.add_slider_float(
-                label="Steering",
-                tag="Steering",
-                width=150,
-                min_value=-90,
-                max_value=90,
-                default_value=0,
-            )
-            dpg.add_slider_int(
-                label="Gear",
-                tag="Gear",
-                width=150,
-                min_value=1,
-                max_value=10,
-                default_value=5,
-            )
-
         # Create zenoh session
         config = zenoh.Config.from_file("host/zenoh_config.json")
         self.session = zenoh.open(config)
@@ -71,9 +45,6 @@ class Monitoring:
         self.stop_handler = self.session.declare_publisher("happywheels/stop")
         self.camera_sub = self.session.declare_subscriber(
             "happywheels/camera", self.camera_callback
-        )
-        self.motor_sub = self.session.declare_subscriber(
-            "happywheels/controller_conversion", self.motor_callback
         )
 
     def run(self):
@@ -93,16 +64,14 @@ class Monitoring:
         self.close()
 
     def close(self):
-        # self.stop_handler.put([])
         self.stop_handler.undeclare()
         self.camera_sub.undeclare()
-        self.motor_sub.undeclare()
         self.session.close()
 
         dpg.destroy_context()
 
     def camera_callback(self, sample):
-        image = RGBCamera.deserialize(sample.payload.to_bytes())
+        image = CompressedImage.deserialize(sample.payload.to_bytes())
         rgb = np.frombuffer(bytes(image.rgb), dtype=np.uint8)
         rgb = cv2.imdecode(rgb, cv2.IMREAD_COLOR)
         rgb = cv2.resize(rgb, (640, 480))
@@ -121,13 +90,6 @@ class Monitoring:
 
         texture_data = np.true_divide(data, 255.0)
         dpg.set_value("camera_color", texture_data)
-
-    def motor_callback(self, sample):
-        motor = Motor.deserialize(sample.payload.to_bytes())
-
-        dpg.set_value("Steering", motor.steering)
-        dpg.set_value("Speed", motor.speed)
-        dpg.set_value("Gear", motor.gear)
 
     def ctrl_c_signal(self, signum, frame):
         # Stop the node

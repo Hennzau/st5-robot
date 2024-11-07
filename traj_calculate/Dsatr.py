@@ -132,15 +132,18 @@ def Main(global_map, gx, gy, sx, sy):
                 temp = s
         node.start = temp.copy()
         print(node.start[0], node.start[1])
-        plt.plot(node.start[0], node.start[1], '.b')
+        # plt.plot(node.start[0], node.start[1], '.b')
         last = ScanAndUpdate(node, last)
-        plt.pause(0.1)
+        # plt.pause(0.1)
 
 def ScanAndUpdate(node, last):
     s_list = node.sense(3)
     flag = True
     for s in s_list:
+        
+        #if DetectObstacle(s[0],s[1]) -> 1. detected 0. not detected
         if node.sensed_map[s[0], s[1]] != node.global_map[s[0], s[1]]:
+            
             flag = False
             # print('See a wall!')
             break
@@ -148,9 +151,14 @@ def ScanAndUpdate(node, last):
         node.k_m += node.h_estimate(last, node.start)
         last = node.start.copy()
         for s in s_list:
+            
+            #if node.sensed_map[s[0], s[1]] != DetectObstacle(s[0],s[1]) -> 1.0 detected (in case detect an obstacle or detect the edge)   0.0 (otherwise)
             if node.sensed_map[s[0], s[1]] != node.global_map[s[0], s[1]]:
-                plt.plot(s[0],s[1], 'xr')
+                # plt.plot(s[0],s[1], 'xr')
+                
+                #node.sensed_map[s[0], s[1]] = DetectObstacle(s[0],s[1])
                 node.sensed_map[s[0], s[1]] = node.global_map[s[0], s[1]]
+                
                 node.UpdateVertex(s)
         for i in range(len(node.queue)):
             u = heapq.heappop(node.queue).key
@@ -201,8 +209,8 @@ if __name__ == "__main__":
     grid_size = 1.0
 
     # set obstable positions
-    ox, oy = [], []
-    global_map = maze(width=7, height=7)
+    ox, oy = [2], [2]
+    # global_map = maze(width=7, height=7)
     # print(type(global_map))
     # print(global_map)
     
@@ -217,19 +225,17 @@ if __name__ == "__main__":
     
     global_map[global_map == 1] = np.inf
 
-    #Visualization of the grid
-    for i in range(1, len(global_map)):
-        for j in range(1, len(global_map[i])):
-            if global_map[i][j] == np.inf:
-                ox.append(i)
-                oy.append(j)
-    plt.grid(True)
-    plt.plot(ox, oy, ".k")
-    plt.plot(sx, sy, "og")
-    plt.plot(gx, gy, "xb")
+    # #Visualization of the grid
+    # for i in range(1, len(global_map)):
+    #     for j in range(1, len(global_map[i])):
+    #         if global_map[i][j] == np.inf:
+    #             ox.append(i)
+    #             oy.append(j)
+    # plt.grid(True)
+    # plt.plot(ox, oy, ".k")
+    # plt.plot(sx, sy, "og")
+    # plt.plot(gx, gy, "xb")
     
     #Main part of D*
     Main(global_map, gx, gy, sx, sy)
     
-    # plt.plot(rx, ry, "-r")
-    plt.show()

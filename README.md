@@ -7,12 +7,13 @@ qui est la simulation de véhicules dans un scénario que nous avons défini com
 
 ## Membres de l'équipe
 
+- [Jiaheng DONG]()
+- [Tom KIRCHGESSNER]()
+- [François LE FEBVRE DE NAILLY]()
+- [Dahwa LE GRAND]()
 - [Enzo Le Van](https://github.com/Hennzau)
-- [Tom Kirchgessner]()
-- [Jiaheng Dong]()
-- [François de Nailly]()
-- [Sophie Schnaffit]()
-- [Dawha Le Grand]()
+- [Sophie SCHAFFNIT]()
+
 
 ## Objectifs
 
@@ -66,7 +67,7 @@ Ce robot est fait pour fonctionner avec python 3.9 sur la raspberry et sur votre
 
 **Note**: Le code qui doit être flashé sur l'arduino est dans le dossier `arduino/arduino.ino`.
 
-## IPC / TCPIP
+## IPC / TCP-IP
 
 Les différents noeuds ont été créés avec la bibliothèque `zenoh` qui permet de connecter des processus entre eux en utlisant des protocoles de communication
 comme TCP, UDP, Serial, etc. Cela permet de lancer les noeuds sur des machines différentes et de les connecter ensemble.

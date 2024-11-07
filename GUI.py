@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QVB
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6 import QtCore
 from functools import partial
-# from layout_colorwidget import Color
+import time
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -15,6 +15,7 @@ class MainWindow(QMainWindow):
         choice_layout = QHBoxLayout()
         button_layout = QGridLayout()
         validate_layout = QHBoxLayout()
+        return_layout = QHBoxLayout()
 
         # Label for table destination
         self.input = QLabel("Table de destination : ")
@@ -46,6 +47,12 @@ class MainWindow(QMainWindow):
         validate_layout.addWidget(self.confirm)
         self.confirm.setStyleSheet("background-color : #85de8f;")
 
+        # Return button
+        self.finished = QPushButton("Plat récupéré")
+        self.finished.pressed.connect(partial(self.done))
+        return_layout.addWidget(self.finished)
+        self.finished.setStyleSheet("background-color : #35868c;")
+
         # Add table buttons
         for i in range(4):
             for j in range(4):
@@ -60,6 +67,8 @@ class MainWindow(QMainWindow):
         pagelayout.addLayout(button_layout)
         pagelayout.addItem(QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         pagelayout.addLayout(validate_layout)
+        pagelayout.addItem(QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        pagelayout.addLayout(return_layout)
 
         # Set the central widget
         widget = QWidget()
@@ -71,6 +80,10 @@ class MainWindow(QMainWindow):
         self.table = str(4 * i + j + 1)
         self.t_id = (i + 1,j + 1)
         self.text.setText(self.table)
+    
+    def done(self):
+        self.t_id = (1, 1)
+        self.close()
 
     def exit(self):
         """Sets the table to a cancel message and closes the window."""
@@ -83,6 +96,7 @@ def user_input():
     window.resize(350, 350)
     window.show()
     app.exec()
-    return (window.table, window.t_id)
+    return (window.t_id)
+
 
 print(user_input())

@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
         self.text = QLabel(self.table)
         self.text.setFont(QFont("Arial", 10))
 
-        config = zenoh.Config.from_file("host/zenoh_config.json")
+        config = zenoh.Config.from_file("host_zenoh.json")
         self.session = zenoh.open(config)
 
         self.pub_table = self.session.declare_publisher("happywheels/table")

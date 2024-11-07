@@ -65,7 +65,7 @@ class Node:
         # Create zenoh session
         # =======================
 
-        config = zenoh.Config.from_file("raspberry/zenoh_config.json")
+        config = zenoh.Config.from_file("rpi_zenoh.json")
         self.session = zenoh.open(config)
 
         # =======================

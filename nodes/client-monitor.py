@@ -29,14 +29,17 @@ class MainWindow(QMainWindow):
         choice_layout = QHBoxLayout()
         button_layout = QGridLayout()
         validate_layout = QHBoxLayout()
+        return_layout = QHBoxLayout()
 
         # Label for table destination
         self.input = QLabel("Table de destination : ")
         self.input.setFont(QFont("Arial", 10))
+        self.input.setStyleSheet("QLabel { color : #000000; }")
         self.table = "À sélectionner"
         self.t_id = (1, 1)
         self.text = QLabel(self.table)
         self.text.setFont(QFont("Arial", 10))
+        self.text.setStyleSheet("QLabel { color : #000000; }")
 
         config = zenoh.Config.from_file("host_zenoh.json")
         self.session = zenoh.open(config)
@@ -45,33 +48,38 @@ class MainWindow(QMainWindow):
 
         # Adding logo
         self.logo = QLabel(self)
-        img = QPixmap("src/logo_happy_wheels.png")
-        # img = img.scaled(80, 80, QtCore.Qt.AspectRatioMode.IgnoreAspectRatio)
+        img = QPixmap("docs/src/logo_happy_wheels.png")
+        img = img.scaled(80, 80, QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         self.logo.setPixmap(img)
 
         choice_layout.addWidget(self.input)
         choice_layout.addWidget(self.text)
         choice_layout.addWidget(self.logo)
-        choice_layout.setContentsMargins(0, 0, 0, 0)
+        choice_layout.setContentsMargins(1, 1, 1, 1)
 
         # Discard and Confirm buttons
         self.discard = QPushButton("Annuler")
         self.discard.pressed.connect(self.exit)
         validate_layout.addWidget(self.discard)
-        self.discard.setStyleSheet("background-color : #fc6a6a;")
+        self.discard.setStyleSheet("background-color : #fc6a6a; color : #000000;")
 
         self.confirm = QPushButton("Valider")
         self.confirm.pressed.connect(self.send_table)
         validate_layout.addWidget(self.confirm)
-        self.confirm.setStyleSheet("background-color : #85de8f;")
+        self.confirm.setStyleSheet("background-color : #85de8f; color : #000000;")
+
+        # Return button
+        self.finished = QPushButton("Plat récupéré")
+        self.finished.pressed.connect(partial(self.done))
+        return_layout.addWidget(self.finished)
+        self.finished.setStyleSheet("background-color : #ffb2a0; color : #000000;")
 
         # Add table buttons
         for i in range(5):
             for j in range(5):
-                if i == 0 and j == 0:
-                    continue
-                btn = QPushButton(str(5 * i + j + 1))
+                btn = QPushButton(str(4 * i + j + 1))
                 btn.pressed.connect(partial(self.select_table, i, j))
+                btn.setStyleSheet("background-color : #C5dfe0; color : #000000;")
                 button_layout.addWidget(btn, i, j)
 
         # Add layouts to main layout
@@ -89,10 +97,17 @@ class MainWindow(QMainWindow):
             )
         )
         pagelayout.addLayout(validate_layout)
+        pagelayout.addItem(
+            QSpacerItem(
+                10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+            )
+        )
+        pagelayout.addLayout(return_layout)
 
-        # Set the central widget
+        # Set background color for the central widget
         widget = QWidget()
         widget.setLayout(pagelayout)
+        widget.setStyleSheet("background-color : #35868c;")
         self.setCentralWidget(widget)
 
     def select_table(self, i, j):
@@ -104,9 +119,14 @@ class MainWindow(QMainWindow):
     def send_table(self):
         """Sends the table to the kitchen."""
         self.pub_table.put(
-            TableToDrive.serialize(TableToDrive(i=self.t_id[0], j=self.t_id[1]))
+            NextWaypoint.serialize(NextWaypoint(i=self.t_id[0], j=self.t_id[1]))
         )
         print("Table envoyée")
+
+    def done(self):
+        """Sends the table to the kitchen."""
+        self.pub_table.put(NextWaypoint.serialize(NextWaypoint(i=1, j=1)))
+        print("Retour")
 
     def exit(self):
         """Sets the table to a cancel message and closes the window."""

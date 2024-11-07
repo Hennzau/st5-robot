@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         config = zenoh.Config.from_file("host_zenoh.json")
         self.session = zenoh.open(config)
 
-        self.pub_table = self.session.declare_publisher("happywheels/table")
+        self.pub_table = self.session.declare_publisher("happywheels/next_waypoint")
 
         # Adding logo
         self.logo = QLabel(self)

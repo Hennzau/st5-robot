@@ -61,6 +61,8 @@ class Node:
             self.sensors.append(self.robot.getDevice(self.sensors_names[i]))
             self.sensors[i].enable(self.time_step)
 
+        self.velocity = [0, 0]
+
         # =======================
         # Create zenoh session
         # =======================
@@ -109,6 +111,11 @@ class Node:
             # =======================
             # Complete here with your own message
             # =======================
+
+            self.wheels[0].setVelocity(self.velocity[1] / 255 * 6)
+            self.wheels[1].setVelocity(self.velocity[0] / 255 * 6)
+            self.wheels[2].setVelocity(self.velocity[1] / 255 * 6)
+            self.wheels[3].setVelocity(self.velocity[0] / 255 * 6)
 
             data = ProcessedData(0, 0, 0, 0, 0, 0)
 
@@ -206,14 +213,11 @@ class Node:
 
             self.camera_publisher.put(CompressedImage.serialize(image))
 
-            r_sensor_mem = self.sensors[0].getValue()
-            l_sensor_mem = self.sensors[1].getValue()
+            r_sensor_mem = self.sensors[1].getValue()
+            l_sensor_mem = self.sensors[0].getValue()
 
-            r_sensor_mem = 0 if r_sensor_mem < 0 else r_sensor_mem
-            l_sensor_mem = 0 if l_sensor_mem < 0 else l_sensor_mem
-
-            r_sensor_mem = int(r_sensor_mem * 128 * 264 / 492 / 2.1)
-            l_sensor_mem = int(l_sensor_mem * 128 * 264 / 492 / 2.1)
+            r_sensor_mem = int(r_sensor_mem * 128 * 264 / 492)
+            l_sensor_mem = int(l_sensor_mem * 128 * 264 / 492)
 
             self.encoder_publisher.put(
                 EncoderData.serialize(EncoderData(l_sensor_mem, r_sensor_mem))
@@ -228,10 +232,7 @@ class Node:
     def motor_control_callback(self, sample):
         motor_control = MotorControl.deserialize(sample.payload.to_bytes())
 
-        self.wheels[0].setVelocity(motor_control.speed_right / 255 * 3)
-        self.wheels[1].setVelocity(motor_control.speed_left / 255 * 3)
-        self.wheels[2].setVelocity(motor_control.speed_right / 255 * 3)
-        self.wheels[3].setVelocity(motor_control.speed_left / 255 * 3)
+        self.velocity = [motor_control.speed_left, motor_control.speed_right]
 
     def close(self):
         # =======================

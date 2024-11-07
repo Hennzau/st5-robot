@@ -118,12 +118,12 @@ class Node:
                 self.zenoh_mutex.release()
                 continue
 
-            # if self.next_waypoint is None:
-            #     self.zenoh_mutex.release()
-            #     continue
+            if self.next_waypoint is None:
+                self.zenoh_mutex.release()
+                continue
 
             if self.next_step == "STOP":
-                self.next_step = self.robot.move_to(3, 3, self.obstacles)
+                self.next_step = self.robot.move_to(self.next_waypoint.i, self.next_waypoint.j, self.obstacles)
 
             self.do_next_step()
 
@@ -230,7 +230,6 @@ class Node:
                 )
 
             self.robot.avance()
-            print(self.robot.i, self.robot.j)
 
             self.zenoh_mutex.release()
         else:
@@ -285,17 +284,21 @@ class Node:
                 self.grace_timer = time.time()
 
         if self.padding_encoder is not None:
+            # real
             if (
                 self.encoder[0] - self.padding_encoder[0] > 120
                 and self.encoder[1] - self.padding_encoder[1] > 120
             ):
+            # sim
+            # if (
+            #     self.encoder[0] - self.padding_encoder[0] > 260
+            #     and self.encoder[1] - self.padding_encoder[1] > 260
+            # ):
                 self.next_step = "STOP"
                 self.padding_encoder = None
                 print("Padding done, stopping...")
 
-                print(self.robot.i, self.robot.j, self.robot.direction)
                 self.robot.avance()
-                print(self.robot.i, self.robot.j)
 
     def do_90_left(self):
         # =======================
@@ -307,11 +310,16 @@ class Node:
 
         if self.turn_encoder is None:
             self.turn_encoder = self.encoder
-
+        # real
         if (
             self.encoder[0] - self.turn_encoder[0] < -189
             and self.encoder[1] - self.turn_encoder[1] > 264
         ):
+        # sim
+        # if (
+        #     self.encoder[0] - self.turn_encoder[0] < -189 * 0.8
+        #     and self.encoder[1] - self.turn_encoder[1] > 264 * 0.8
+        # ):
             self.next_step = "STOP"
             self.turn_encoder = None
 
@@ -329,15 +337,16 @@ class Node:
         if self.turn_encoder is None:
             self.turn_encoder = self.encoder
 
+        # real
         if (
             self.encoder[1] - self.turn_encoder[1] < -189
             and self.encoder[0] - self.turn_encoder[0] > 264
         ):
-            # sim
-            # if (
-            #     self.encoder[0] - self.turn_encoder[0] < -255 / 2.5 and
-            #     self.encoder[1] - self.turn_encoder[1] > 264 / 2.5
-            # ):
+        # sim
+        # if (
+        #     self.encoder[1] - self.turn_encoder[1] < -189 * 1
+        #     and self.encoder[0] - self.turn_encoder[0] > 264 * 1
+        # ):
             self.next_step = "STOP"
             self.turn_encoder = None
 
@@ -355,19 +364,21 @@ class Node:
         if self.turn_encoder is None:
             self.turn_encoder = self.encoder
 
-        print(self.encoder[0] - self.turn_encoder[0])
-        print(self.encoder[1] - self.turn_encoder[1])
-
+        # real
         if (
             self.encoder[0] - self.turn_encoder[0] < -189 * 2.2
             and self.encoder[1] - self.turn_encoder[1] > 264 * 2.2
         ):
-            self.next_step = "FRONT"
+        # sim
+        # if (
+        #     self.encoder[0] - self.turn_encoder[0] < -189 * 1.7
+        #     and self.encoder[1] - self.turn_encoder[1] > 264 * 1.7
+        # ):
+            self.next_step = "STOP"
             self.turn_encoder = None
 
             self.robot.gauche()
             self.robot.gauche()
-            print(self.robot.i, self.robot.j, self.robot.direction)
 
             self.grace_timer = time.time()
 

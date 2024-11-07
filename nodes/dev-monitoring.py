@@ -38,7 +38,7 @@ class Monitoring:
             dpg.add_image("camera_color", pos=(0, 0))
 
         # Create zenoh session
-        config = zenoh.Config.from_file("host/zenoh_config.json")
+        config = zenoh.Config.from_file("host_zenoh.json")
         self.session = zenoh.open(config)
 
         # Create zenoh pub/subs

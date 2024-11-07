@@ -20,7 +20,14 @@ import numpy as np
 # Import the message class
 # =======================
 
-from message import ProcessedData, IRData, EncoderData, MotorControl, NextWaypoint, Urgency
+from message import (
+    ProcessedData,
+    IRData,
+    EncoderData,
+    MotorControl,
+    NextWaypoint,
+    Urgency,
+)
 
 from graph import Robot
 
@@ -98,7 +105,9 @@ class Node:
 
         self.motor_control = self.session.declare_publisher("happywheels/motor_control")
 
-        self.urgency_subscriber = self.session.declare_subscriber("happywheels/urgency", self.urgency_callback)
+        self.urgency_subscriber = self.session.declare_subscriber(
+            "happywheels/urgency", self.urgency_callback
+        )
 
     def run(self):
         while True:

@@ -47,6 +47,7 @@ class NextWaypoint(IdlStruct):
     i: uint32
     j: uint32
 
+
 @dataclass
 class Urgency(IdlStruct):
     urgency: uint8

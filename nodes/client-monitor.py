@@ -121,7 +121,9 @@ class MainWindow(QMainWindow):
 
         print(self.sommet_id)
         self.pub_sommet.put(
-            NextWaypoint.serialize(NextWaypoint(i=self.sommet_id[0], j=self.sommet_id[1]))
+            NextWaypoint.serialize(
+                NextWaypoint(i=self.sommet_id[0], j=self.sommet_id[1])
+            )
         )
         print("Table envoyée")
 

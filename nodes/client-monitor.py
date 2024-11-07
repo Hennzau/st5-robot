@@ -32,19 +32,19 @@ class MainWindow(QMainWindow):
         return_layout = QHBoxLayout()
 
         # Label for table destination
-        self.input = QLabel("Table de destination : ")
+        self.input = QLabel("Sommet de destination : ")
         self.input.setFont(QFont("Arial", 10))
         self.input.setStyleSheet("QLabel { color : #000000; }")
-        self.table = "À sélectionner"
-        self.t_id = (1, 1)
-        self.text = QLabel(self.table)
+        self.sommet = "À sélectionner"
+        self.sommet_id = (1, 1)
+        self.text = QLabel(self.sommet)
         self.text.setFont(QFont("Arial", 10))
         self.text.setStyleSheet("QLabel { color : #000000; }")
 
         config = zenoh.Config.from_file("host_zenoh.json")
         self.session = zenoh.open(config)
 
-        self.pub_table = self.session.declare_publisher("happywheels/next_waypoint")
+        self.pub_sommet = self.session.declare_publisher("happywheels/next_waypoint")
 
         # Adding logo
         self.logo = QLabel(self)
@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
         # Add table buttons
         for i in range(5):
             for j in range(5):
-                btn = QPushButton(str(4 * i + j + 1))
+                btn = QPushButton(str(5 * i + j + 1))
                 btn.pressed.connect(partial(self.select_table, i, j))
                 btn.setStyleSheet("background-color : #C5dfe0; color : #000000;")
                 button_layout.addWidget(btn, i, j)
@@ -112,25 +112,27 @@ class MainWindow(QMainWindow):
 
     def select_table(self, i, j):
         """Updates the selected table label."""
-        self.table = str(5 * i + j + 1)
-        self.t_id = (i + 1, j + 1)
-        self.text.setText(self.table)
+        self.sommet = str(5 * i + j + 1)
+        self.sommet_id = (i + 1, j + 1)
+        self.text.setText(self.sommet)
 
     def send_table(self):
         """Sends the table to the kitchen."""
-        self.pub_table.put(
-            NextWaypoint.serialize(NextWaypoint(i=self.t_id[0], j=self.t_id[1]))
+
+        print(self.sommet_id)
+        self.pub_sommet.put(
+            NextWaypoint.serialize(NextWaypoint(i=self.sommet_id[0], j=self.sommet_id[1]))
         )
         print("Table envoyée")
 
     def done(self):
         """Sends the table to the kitchen."""
-        self.pub_table.put(NextWaypoint.serialize(NextWaypoint(i=1, j=1)))
+        self.pub_sommet.put(NextWaypoint.serialize(NextWaypoint(i=1, j=1)))
         print("Retour")
 
     def exit(self):
         """Sets the table to a cancel message and closes the window."""
-        self.table = "Opération annulée"
+        self.sommet = "Opération annulée"
         self.close()
 
 

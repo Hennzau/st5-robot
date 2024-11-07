@@ -123,7 +123,9 @@ class Node:
                 continue
 
             if self.next_step == "STOP":
-                self.next_step = self.robot.move_to(self.next_waypoint.i, self.next_waypoint.j, self.obstacles)
+                self.next_step = self.robot.move_to(
+                    self.next_waypoint.i, self.next_waypoint.j, self.obstacles
+                )
 
             self.do_next_step()
 
@@ -289,11 +291,11 @@ class Node:
                 self.encoder[0] - self.padding_encoder[0] > 120
                 and self.encoder[1] - self.padding_encoder[1] > 120
             ):
-            # sim
-            # if (
-            #     self.encoder[0] - self.padding_encoder[0] > 260
-            #     and self.encoder[1] - self.padding_encoder[1] > 260
-            # ):
+                # sim
+                # if (
+                #     self.encoder[0] - self.padding_encoder[0] > 260
+                #     and self.encoder[1] - self.padding_encoder[1] > 260
+                # ):
                 self.next_step = "STOP"
                 self.padding_encoder = None
                 print("Padding done, stopping...")
@@ -315,11 +317,11 @@ class Node:
             self.encoder[0] - self.turn_encoder[0] < -189
             and self.encoder[1] - self.turn_encoder[1] > 264
         ):
-        # sim
-        # if (
-        #     self.encoder[0] - self.turn_encoder[0] < -189 * 0.8
-        #     and self.encoder[1] - self.turn_encoder[1] > 264 * 0.8
-        # ):
+            # sim
+            # if (
+            #     self.encoder[0] - self.turn_encoder[0] < -189 * 0.8
+            #     and self.encoder[1] - self.turn_encoder[1] > 264 * 0.8
+            # ):
             self.next_step = "STOP"
             self.turn_encoder = None
 
@@ -342,11 +344,11 @@ class Node:
             self.encoder[1] - self.turn_encoder[1] < -189
             and self.encoder[0] - self.turn_encoder[0] > 264
         ):
-        # sim
-        # if (
-        #     self.encoder[1] - self.turn_encoder[1] < -189 * 1
-        #     and self.encoder[0] - self.turn_encoder[0] > 264 * 1
-        # ):
+            # sim
+            # if (
+            #     self.encoder[1] - self.turn_encoder[1] < -189 * 1
+            #     and self.encoder[0] - self.turn_encoder[0] > 264 * 1
+            # ):
             self.next_step = "STOP"
             self.turn_encoder = None
 
@@ -369,11 +371,11 @@ class Node:
             self.encoder[0] - self.turn_encoder[0] < -189 * 2.2
             and self.encoder[1] - self.turn_encoder[1] > 264 * 2.2
         ):
-        # sim
-        # if (
-        #     self.encoder[0] - self.turn_encoder[0] < -189 * 1.7
-        #     and self.encoder[1] - self.turn_encoder[1] > 264 * 1.7
-        # ):
+            # sim
+            # if (
+            #     self.encoder[0] - self.turn_encoder[0] < -189 * 1.7
+            #     and self.encoder[1] - self.turn_encoder[1] > 264 * 1.7
+            # ):
             self.next_step = "STOP"
             self.turn_encoder = None
 

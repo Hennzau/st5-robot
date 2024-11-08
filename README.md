@@ -6,7 +6,7 @@ qui est la simulation de véhicules dans un scénario que nous avons défini com
 <center><img src="docs/src/logo_happy_wheels.png" alt="HappyWheels Logo"/></center>
 
 <video controls>
-  <source src="main.mp4" type="video/mp4">
+  <source src="docs/src/main.mp4" type="video/mp4">
 </video>
 
 ## Membres de l'équipe

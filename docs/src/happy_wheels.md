@@ -110,6 +110,7 @@ Modifiez les fichiers `host_zenoh.json` et `rpi_zenoh.json` pour mettre les bonn
     "endpoints": [
       "udp/localhost:7447",
       "udp/169.254.74.150:7447",
+      "udp/172.20.10.2:7447",
     ]
   },
   "listen": {

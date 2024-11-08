@@ -48,8 +48,8 @@ class MainWindow(QMainWindow):
 
         # Adding logo
         self.logo = QLabel(self)
-        img = QPixmap("docs/src/logo_happy_wheels.png")
-        img = img.scaled(80, 80, QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+        img = QPixmap("docs/src/logo_happy_wheels_GUI.png")
+        # img = img.scaled(80, 80, QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         self.logo.setPixmap(img)
 
         choice_layout.addWidget(self.input)
@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
         # Add table buttons
         for i in range(5):
             for j in range(5):
-                btn = QPushButton(str(5 * i + j + 1))
+                btn = QPushButton( "(" + str (i) + ","  + str(j) + ")")
                 btn.pressed.connect(partial(self.select_table, i, j))
                 btn.setStyleSheet("background-color : #C5dfe0; color : #000000;")
                 button_layout.addWidget(btn, i, j)

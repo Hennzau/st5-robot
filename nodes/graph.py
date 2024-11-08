@@ -26,7 +26,6 @@ class Grille:
     def shape(self):
         return (self.lignes, self.colonnes)
 
-
     def exist_arete(self, s, t):
         if not s in self.aretes:
             return False

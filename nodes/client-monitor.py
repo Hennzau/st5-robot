@@ -112,7 +112,7 @@ class MainWindow(QMainWindow):
 
     def select_table(self, i, j):
         """Updates the selected table label."""
-        self.sommet = str(5 * i + j + 1)
+        self.sommet = "(" + str (i + 1) + ","  + str(j + 1) + ")"
         self.sommet_id = (i + 1, j + 1)
         self.text.setText(self.sommet)
 

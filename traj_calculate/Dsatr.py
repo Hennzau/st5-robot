@@ -4,6 +4,8 @@ import heapq
 from numpy.random import random_integers as rnd, randint
 import matplotlib.pyplot as plt
 
+# from graphe import *
+
 
 class Element:
     def __init__(self, key, value1, value2):
@@ -123,6 +125,7 @@ def Main(global_map, gx, gy, sx, sy):
     last = ScanAndUpdate(node, last)
     node.ComputeShortestPath()
     while np.sum(np.abs(node.start - node.goal)) != 0:
+        lastplt = node.start
         s_list = node.succ(node.start)
         min_s = np.inf
         for s in s_list:
@@ -132,9 +135,11 @@ def Main(global_map, gx, gy, sx, sy):
                 temp = s
         node.start = temp.copy()
         print(node.start[0], node.start[1])
-        # plt.plot(node.start[0], node.start[1], '.b')
+        plt.plot(node.start[0], node.start[1], '.b')
+        plt.pause(0.1)
         last = ScanAndUpdate(node, last)
-        # plt.pause(0.1)
+        plt.plot([lastplt[0], node.start[0]], [lastplt[1], node.start[1]], color='b',linewidth=3)
+        plt.pause(0.5)
 
 def ScanAndUpdate(node, last):
     s_list = node.sense(3)
@@ -154,7 +159,7 @@ def ScanAndUpdate(node, last):
             
             #if node.sensed_map[s[0], s[1]] != DetectObstacle(s[0],s[1]) -> 1.0 detected (in case detect an obstacle or detect the edge)   0.0 (otherwise)
             if node.sensed_map[s[0], s[1]] != node.global_map[s[0], s[1]]:
-                # plt.plot(s[0],s[1], 'xr')
+                plt.plot(s[0],s[1], 'xr')
                 
                 #node.sensed_map[s[0], s[1]] = DetectObstacle(s[0],s[1])
                 node.sensed_map[s[0], s[1]] = node.global_map[s[0], s[1]]
@@ -209,7 +214,7 @@ if __name__ == "__main__":
     grid_size = 1.0
 
     # set obstable positions
-    ox, oy = [2], [2]
+    ox, oy = [1,2,4], [3,3,4]
     # global_map = maze(width=7, height=7)
     # print(type(global_map))
     # print(global_map)
@@ -217,7 +222,7 @@ if __name__ == "__main__":
     #Set up grid, use float number to indicate 1.(block) and 0.(non block) 
     global_map = np.array([[1., 1., 1., 1., 1., 1., 1.],
                         [1., 0., 0., 0., 0., 0., 1.],
-                        [1., 0., 0., 0., 0., 0., 1.],
+                        [1., 0., 0., 0., 1., 0., 1.],
                         [1., 1., 1., 0., 0., 0., 1.],
                         [1., 0., 0., 0., 0., 0., 1.],
                         [1., 0., 0., 0., 0., 0., 1.],
@@ -225,17 +230,19 @@ if __name__ == "__main__":
     
     global_map[global_map == 1] = np.inf
 
-    # #Visualization of the grid
-    # for i in range(1, len(global_map)):
-    #     for j in range(1, len(global_map[i])):
-    #         if global_map[i][j] == np.inf:
-    #             ox.append(i)
-    #             oy.append(j)
-    # plt.grid(True)
-    # plt.plot(ox, oy, ".k")
-    # plt.plot(sx, sy, "og")
-    # plt.plot(gx, gy, "xb")
+    #Visualization of the grid
+    for i in range(1, len(global_map)):
+        for j in range(1, len(global_map[i])):
+            if global_map[i][j] == np.inf:
+                ox.append(i)
+                oy.append(j)
+    plt.grid(True)
+    plt.plot(ox, oy, "or")
+    plt.plot(sx, sy, "og")
+    plt.plot(gx, gy, "ob")
     
     #Main part of D*
     Main(global_map, gx, gy, sx, sy)
     
+    #Keep the window
+    plt.show()

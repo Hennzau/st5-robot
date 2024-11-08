@@ -268,6 +268,8 @@ class Node:
     def next_waypoint_callback(self, sample):
         wait_point = NextWaypoint.deserialize(sample.payload.to_bytes())
 
+        print(self.next_waypoint)
+
         self.zenoh_mutex.acquire()
         self.next_waypoint = wait_point
         self.zenoh_mutex.release()

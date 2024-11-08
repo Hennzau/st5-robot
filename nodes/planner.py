@@ -192,24 +192,27 @@ class Node:
                 self.follow_line_state = "RIGHT"
             elif processed_data.distance_to_middle < left_treshold:
                 self.follow_line_state = "LEFT"
+            # elif processed_data.distance_to_middle > 8000:
+            #     self.next_step = "STOP-ALL"
+            #     print("NO LINE, EMERGENCY STOP")
         elif self.follow_line_state == "RIGHT":
             if processed_data.distance_to_middle < tube_x:
                 self.follow_line_state = "FRONT"
         elif self.follow_line_state == "LEFT":
             if 8000 > processed_data.distance_to_middle > -tube_x:
                 self.follow_line_state = "FRONT"
-        elif (
-            self.follow_line_state == "FRONT"
-            and processed_data.distance_to_middle > 8000
-        ):
-            self.next_step = "STOP-ALL"
 
         self.zenoh_mutex.release()
 
     def ir_callback(self, sample):
-        ir_data = IRData.deserialize(sample.payload.to_bytes())
+        payload = sample.payload.to_bytes()
 
-        if ir_data.distance < 30:
+        if payload is None:
+            return
+
+        ir_data = IRData.deserialize(payload)
+
+        if ir_data.distance < 25:
             self.zenoh_mutex.acquire()
 
             self.distance_trigger += 1
@@ -251,7 +254,12 @@ class Node:
             self.zenoh_mutex.release()
 
     def encoder_callback(self, sample):
-        encoder_data = EncoderData.deserialize(sample.payload.to_bytes())
+        buffer = sample.payload.to_bytes()
+
+        if buffer is None:
+            return
+
+        encoder_data = EncoderData.deserialize(buffer)
 
         self.zenoh_mutex.acquire()
         self.encoder = [encoder_data.left, encoder_data.right]
@@ -265,6 +273,7 @@ class Node:
         self.zenoh_mutex.release()
 
     def urgency_callback(self, sample):
+        print("EMERGENCY STOP")
         self.next_step = "STOP-ALL"
 
     def do_next_step(self):
@@ -390,7 +399,7 @@ class Node:
             #     self.encoder[0] - self.turn_encoder[0] < -189 * 1.7
             #     and self.encoder[1] - self.turn_encoder[1] > 264 * 1.7
             # ):
-            self.next_step = "STOP"
+            self.next_step = "FRONT"
             self.turn_encoder = None
 
             self.robot.gauche()

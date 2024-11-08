@@ -43,8 +43,8 @@ class Node:
         # =======================
 
         self.camera = PiCamera(sensor_mode=2)
-        self.camera.awb_mode = "off"
-        self.camera.awb_gains = 1.5
+        # self.camera.awb_mode = "fluorescent"
+        # self.camera.awb_gains = 2
         self.camera.resolution = (160, 128)
         self.camera.framerate = 32
         self.raw_capture = PiRGBArray(self.camera, size=self.camera.resolution)

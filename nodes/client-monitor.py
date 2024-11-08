@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
         # Add table buttons
         for i in range(5):
             for j in range(5):
-                btn = QPushButton( "(" + str (i) + ","  + str(j) + ")")
+                btn = QPushButton( "(" + str (i + 1) + ","  + str(j + 1) + ")")
                 btn.pressed.connect(partial(self.select_table, i, j))
                 btn.setStyleSheet("background-color : #C5dfe0; color : #000000;")
                 button_layout.addWidget(btn, i, j)

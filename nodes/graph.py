@@ -26,28 +26,29 @@ class Grille:
     def shape(self):
         return (self.lignes, self.colonnes)
 
-    def arete(self, s):
-        return self.aretes[s]
 
     def exist_arete(self, s, t):
-        return t in self.arete(s)
+        if not s in self.aretes:
+            return False
+
+        return t in self.aretes[s]
 
     def obstacles(self):
         return [((1, 2), (1, 3))]
 
     def delete_arete(self, s, t):
         if self.exist_arete(s, t):
-            if t in self.aretes[s]:
-                self.aretes[s].remove(t)
+            self.aretes[s].remove(t)
         if self.exist_arete(t, s):
-            if s in self.aretes[t]:
-                self.aretes[t].remove(s)
+            self.aretes[t].remove(s)
 
     def add_arete(self, s, t):
         if not self.exist_arete(s, t):
-            self.aretes[s].append(t)
+            if s in self.aretes:
+                self.aretes[s].append(t)
         if not self.exist_arete(t, s):
-            self.aretes[t].append(s)
+            if t in self.aretes:
+                self.aretes[t].append(s)
 
 
 class Robot:
@@ -125,7 +126,10 @@ class Robot:
             noeud = file.pop(0)
 
             # Parcourir les voisins non visités
-            for voisin in G.arete(noeud):
+            if noeud not in G.aretes:
+                continue
+
+            for voisin in G.aretes[noeud]:
                 if voisin not in parent:
                     parent[voisin] = noeud
                     file.append(voisin)

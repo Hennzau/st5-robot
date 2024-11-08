@@ -36,10 +36,13 @@ Ce dernier d'occupe du traitement d'image et de donner les ordres au robot.
 Pour tester cette simulation, il faut :
 
 - Ouvrir le monde ```simulation/worlds/huit.wbt``` (ouvrir ```grille.wbt``` pour tester sur la grille)
-- Modifier le controller du robot pour ```basique.py```
+- S'assurer que le controller soit ```basique.py``` (dans la barre latérale gauche)
 - Démarrer la simulation avec le bouton play
 
 Dans *Webots*, le robot bouge et le retour vidéo s'affiche dans une fenêtre Python.
+C'est ce *controller* qui nous a permis de choisir et tester notre stratégie de traitement d'image, une visualisation partielle est disponible ci-dessous :
+
+![Huit simulé](huit.gif)
 
 #### Simulation avec Zenoh
 

@@ -155,5 +155,5 @@ while robot.step(TIME_STEP) != -1:
     else:
         print("No Centroid Found")
     
-    cv2.imshow("Image traitée", im2)
+    cv2.imshow("Image traitee", im2)
     cv2.waitKey(1)

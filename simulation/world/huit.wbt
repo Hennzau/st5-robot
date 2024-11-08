@@ -7,8 +7,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.2941874450609382 0.5195781241752344 -0.8021797305137186 1.3827193272708014
-  position -2.2365610796601616 3.966348556183831 4.0458220992551075
+  orientation 0.47956932407563013 0.5605711946831956 -0.6751097681837362 1.9056188136443597
+  position -0.40071196242931006 2.2761070711938456 6.033587431614036
 }
 TexturedBackground {
 }
@@ -92,8 +92,6 @@ Robot {
         boundingObject USE WHEEL
         physics Physics {
         }
-        linearVelocity -5.298761231029646e-16 -7.869075825788665e-16 -2.121338384015669e-16
-        angularVelocity -1.2534447109567463e-15 1.6274489002714946e-15 -8.20816589462015e-16
       }
     }
     DEF WHEEL2 HingeJoint {
@@ -120,8 +118,6 @@ Robot {
         boundingObject USE WHEEL
         physics Physics {
         }
-        linearVelocity -5.686401981991794e-16 -8.7042155956809e-16 -7.02837253868954e-17
-        angularVelocity 2.0173134914849105e-15 3.309897296815529e-15 2.2004996107407507e-16
       }
     }
     DEF WHEEL3 HingeJoint {
@@ -148,8 +144,6 @@ Robot {
         boundingObject USE WHEEL
         physics Physics {
         }
-        linearVelocity 3.3994702111436027e-16 7.340087264503647e-16 1.7617516399697065e-16
-        angularVelocity -4.9638450541837795e-15 -1.919494464997146e-15 -8.204412279266762e-16
       }
     }
     DEF WHEEL4 HingeJoint {
@@ -176,8 +170,6 @@ Robot {
         boundingObject USE WHEEL
         physics Physics {
         }
-        linearVelocity 1.0720108438532576e-15 9.45181793449933e-16 -4.245725755741778e-16
-        angularVelocity 6.866606865750577e-19 2.8333250550683358e-15 -1.5126805544676047e-15
       }
     }
     DEF DS DistanceSensor {
@@ -203,7 +195,7 @@ Robot {
     density -1
     mass 1
   }
-  controller "main"
+  controller "basique"
   linearVelocity 8.589188461828057e-16 -1.0352878580415874e-15 2.2737367544323206e-16
   angularVelocity -3.1562996695847118e-15 1.1602963342870179e-15 -1.1671986256149985e-15
 }

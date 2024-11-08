@@ -7,9 +7,9 @@ En effet, *Webots* permet de développer les algorithmes de perception et de com
 
 ### Fonctionnement de Webots
 
-Une simulation sur *Webots* est principalement constitué d'un monde (world, fichier ```.wbt```). Il faut ouvrir ce fichier dans *Webots*.
+Une simulation sur *Webots* est principalement constituée d'un monde (world, fichier ```.wbt```). Il faut ouvrir ce fichier dans *Webots*.
 
-Le monde des composé de noeuds (solides tels que le sol, robots et autres).
+Le monde est composé de noeuds (solides tels que le sol, robots et autres).
 
 Nous avons placé les noeuds correspondants à la grille et au robot.
 

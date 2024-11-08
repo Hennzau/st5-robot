@@ -78,9 +78,10 @@ comme TCP, UDP, Serial, etc. Cela permet de lancer les noeuds sur des machines d
 
 L'idée est de modifier les fichiers `host_zenoh.json` et `rpi_zenoh.json` pour mettre les IP des machines sur lesquelles vous voulez lancer les noeuds.
 
-Par exemple, dans le cas où vous avez un ordinateur et une raspberry **sur le même réseau WiFi** :
+Par exemple, dans le cas où vous avez un ordinateur "programmation" (utilisé par les gérants du restaurant), une machine "client" (utilisée pour l'interface graphique), ainsi qu'une raspberry **sur le même réseau WiFi** :
 
-- Obtenez l'IP de votre ordinateur, (e.g `169.254.74.150`)
+- Obtenez l'IP de votre ordinateur "programmation", (e.g `169.254.74.150`)
+- Obtenez l'IP de l'ordinateur "client", (eg. `172.20.10.2:7447`)
 - Obtenez l'IP de votre raspberry, (e.g `169.254.74.151`)
 
 Modifiez les fichiers `host_zenoh.json` et `rpi_zenoh.json` pour mettre les bonnes IP :
@@ -93,6 +94,7 @@ Modifiez les fichiers `host_zenoh.json` et `rpi_zenoh.json` pour mettre les bonn
     "endpoints": [
       "udp/localhost:7447",
       "udp/169.254.74.151:7447",
+      "udp/172.20.10.2:7447",
     ]
   },
   "listen": {
@@ -112,6 +114,7 @@ Modifiez les fichiers `host_zenoh.json` et `rpi_zenoh.json` pour mettre les bonn
     "endpoints": [
       "udp/localhost:7447",
       "udp/169.254.74.150:7447",
+      "udp/172.20.10.2:7447",
     ]
   },
   "listen": {
